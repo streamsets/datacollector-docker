@@ -1,8 +1,10 @@
 #!/bin/bash
 
+set -e
+
 # Download the SDC tarball
 cd /tmp
-curl -O -L https://s3-us-west-1.amazonaws.com/download.streamsets.com/datacollector/1.1.0/tarball/streamsets-datacollector-1.1.0.tgz
+curl -O -L https://archives.streamsets.com/datacollector/1.1.0/tarball/streamsets-datacollector-1.1.0.tgz
 
 # Extract tarball and cleanup
 tar xzf /tmp/streamsets-datacollector-1.1.0.tgz -C /opt/
