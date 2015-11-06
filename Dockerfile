@@ -26,7 +26,7 @@ EXPOSE 18630
 
 # Default user, overridable via -e option when executing docker run.
 ENV SDC_USER=sdc \
-    SDC_DIST=/opt/streamsets-datacollector-1.1.1 \
+    SDC_DIST=/opt/streamsets-datacollector-1.1.2 \
     SDC_DATA=/data \
     SDC_LOG=/logs \
     SDC_CONF=/etc/sdc
@@ -45,5 +45,5 @@ VOLUME /mnt ${SDC_DATA} ${SDC_CONF}
 
 USER ${SDC_USER}
 
-ENTRYPOINT ["/opt/streamsets-datacollector-1.1.1/bin/streamsets"]
+ENTRYPOINT ["/opt/streamsets-datacollector-1.1.2/bin/streamsets"]
 CMD ["dc"]
