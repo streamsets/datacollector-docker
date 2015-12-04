@@ -96,5 +96,5 @@ VOLUME /mnt ${SDC_DATA} ${SDC_CONF}
 
 USER ${SDC_USER}
 
-ENTRYPOINT ["/opt/streamsets-datacollector-1.1.2/bin/streamsets"]
+ENTRYPOINT ["/opt/sdc/bin/streamsets"]
 CMD ["dc"]
