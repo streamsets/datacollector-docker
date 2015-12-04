@@ -1,5 +1,8 @@
 # Dockerfiles for StreamSets Data Collector
 
+This is a fork of [https://github.com/streamsets/datacollector-docker]
+to add some customizations.
+
 Basic Usage
 -----------
 `docker run -P -d streamsets/datacollector`

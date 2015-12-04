@@ -21,18 +21,22 @@
 
 FROM jeanblanchard/java:serverjre-8
 
-MAINTAINER Adam Kunicki <adam@streamsets.com>
+MAINTAINER Morton Swimmer
 EXPOSE 18630
 
 # Default user, overridable via -e option when executing docker run.
 ENV SDC_USER=sdc \
-    SDC_DIST=/opt/streamsets-datacollector-1.1.2 \
+    SDC_GROUP=sdc \
+    SDC_UID=100 \
+    SDC_GID=100 \
+    SDC_VERSION=1.1.3 \
+    SDC_DIST=/opt/sdc \
     SDC_DATA=/data \
     SDC_LOG=/logs \
     SDC_CONF=/etc/sdc
 
 RUN apk update && apk add bash curl
-RUN addgroup -S ${SDC_USER} && adduser -S ${SDC_USER} ${SDC_USER}
+RUN addgroup -g ${SDC_GID} -S ${SDC_GROUP} && adduser -u ${SDC_UID} -G ${SDC_GROUP} -S ${SDC_USER}
 
 ADD install.sh /tmp/
 RUN /tmp/install.sh
