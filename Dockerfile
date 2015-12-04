@@ -28,7 +28,7 @@ EXPOSE 18630
 ENV SDC_USER=sdc \
     SDC_GROUP=sdc \
     SDC_UID=100 \
-    SDC_GID=100 \
+    SDC_GID=1000 \
     SDC_VERSION=1.1.3 \
     SDC_DIST=/opt/sdc \
     SDC_DATA=/data \
