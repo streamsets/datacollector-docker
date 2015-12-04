@@ -49,6 +49,7 @@ RUN curl -O -L http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-ja
 
 # Extract tarball and cleanup
 RUN tar xzf /tmp/streamsets-datacollector-$SDC_VERSION.tgz -C /opt/
+RUN mv /opt/streamsets-datacollector-$SDC_VERSION ${SDC_DIST}
 RUN rm -rf /tmp/streamsets-datacollector-*.tgz
 
 # Create the drivers directory
@@ -58,9 +59,9 @@ RUN mkdir -p ${SDC_DIST}-extras ${SDC_DIST}-extras/streamsets-datacollector-jdbc
 RUN mv /tmp/postgresql-9.4-1206-jdbc42.jar ${SDC_DIST}-extras/streamsets-datacollector-jdbc-postgresql/lib/
 
 # unpack the mysql driver
-RUN tar xzf /tmp/mysql-connector-java-5.1.37.tar.gz  -C /tmp/mysql/
-RUN mv /tmp/mysql/mysql-connector-java-5.1.37-bin.jar ${SDC_DIST}-extras/streamsets-datacollector-jdbc-mysql/lib/
-RUN rm -rf /tmp/mysql
+RUN tar xzf /tmp/mysql-connector-java-5.1.37.tar.gz  -C /tmp/
+RUN mv /tmp/mysql-connector-java-5.1.37/mysql-connector-java-5.1.37-bin.jar ${SDC_DIST}-extras/streamsets-datacollector-jdbc-mysql/lib/
+RUN rm -rf /tmp/mysql-connector-java-5.1.37
 RUN rm /tmp/mysql-connector-java-5.1.37.tar.gz
 
 # Disable authentication by default, overriable with custom sdc.properties.
