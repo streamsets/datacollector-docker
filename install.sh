@@ -4,10 +4,10 @@ set -e
 
 # Download the SDC tarball
 cd /tmp
-curl -O -L https://archives.streamsets.com/datacollector/1.1.2/tarball/streamsets-datacollector-1.1.2.tgz
+curl -O -L https://archives.streamsets.com/datacollector/1.1.3/tarball/streamsets-datacollector-1.1.3.tgz
 
 # Extract tarball and cleanup
-tar xzf /tmp/streamsets-datacollector-1.1.2.tgz -C /opt/
+tar xzf /tmp/streamsets-datacollector-1.1.3.tgz -C /opt/
 rm -rf /tmp/streamsets-datacollector-*.tgz
 
 # Disable authentication by default, overriable with custom sdc.properties.

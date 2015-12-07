@@ -18,7 +18,7 @@ Creating a Data Container
 -------------------------
 To create a dedicated data-only container for the pipeline store issue the following command:
 
-`docker create -v /data --name sdc-data streamsets/datacollector:latest /bin/true`
+`docker create -v /data --name sdc-data streamsets/datacollector:latest`
 
 You can then use the `--volumes-from` argument to mount it when you start the data collector.
 
