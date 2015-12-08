@@ -36,7 +36,7 @@ ENV SDC_USER=sdc \
     SDC_CONF=/etc/sdc
 
 RUN apk update && apk add bash curl
-RUN addgroup -g ${SDC_GID} -S ${SDC_GROUP} && adduser -u ${SDC_UID} -G ${SDC_GROUP} -S ${SDC_USER}
+#RUN addgroup -g ${SDC_GID} -S ${SDC_GROUP} && adduser -u ${SDC_UID} -G ${SDC_GROUP} -S ${SDC_USER}
 
 WORKDIR /tmp
 RUN curl -O -L https://archives.streamsets.com/datacollector/$SDC_VERSION/tarball/streamsets-datacollector-$SDC_VERSION.tgz
@@ -66,7 +66,7 @@ RUN rm /tmp/mysql-connector-java-5.1.37.tar.gz
 
 # Disable authentication by default, overriable with custom sdc.properties.
 RUN sed -i 's|\(http.authentication=\).*|\1none|' ${SDC_DIST}/etc/sdc.properties
-RUN chown -R sdc:sdc ${SDC_DIST}
+#RUN chown -R sdc:sdc ${SDC_DIST}
 
 # add our directory to the environment
 RUN echo "export STREAMSETS_LIBRARIES_EXTRA_DIR=${SDC_DIST}-extras" >> ${SDC_DIST}/libexec/sdc-env.sh
@@ -86,7 +86,7 @@ RUN mkdir -p ${SDC_DATA} /mnt ${SDC_LOG}
 RUN mv ${SDC_DIST}/etc ${SDC_CONF}
 
 # Setup filesystem permissions
-RUN chown ${SDC_USER}:${SDC_USER} ${SDC_DATA} ${SDC_LOG}
+#RUN chown ${SDC_USER}:${SDC_USER} ${SDC_DATA} ${SDC_LOG}
 
 # /mnt is a generic mount point for mounting volumes from other containers or the host
 #   such as an input directory for directory spooling.
@@ -94,7 +94,12 @@ RUN chown ${SDC_USER}:${SDC_USER} ${SDC_DATA} ${SDC_LOG}
 # SDC_CONF is a olume containing configuration of the data collector. This can be shared.
 VOLUME /mnt ${SDC_DATA} ${SDC_CONF}
 
-USER ${SDC_USER}
+#USER ${SDC_USER}
 
-ENTRYPOINT ["/opt/sdc/bin/streamsets"]
-CMD ["dc"]
+COPY init.sh /init.sh
+RUN chmod +x /init.sh
+
+#RUN /tmp/init.sh
+ENTRYPOINT [ "/init.sh" ]
+#ENTRYPOINT ["/opt/sdc/bin/streamsets"]
+#CMD ["dc"]
