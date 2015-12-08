@@ -12,6 +12,9 @@ chown -R ${SDC_USER}:${SDC_GROUP} ${SDC_DIST}
 # Setup filesystem permissions
 chown ${SDC_USER}:${SDC_GROUP} ${SDC_DATA} ${SDC_LOG}
 
+# change to our new shiny user
+su - ${SDC_USER}
+
 #exec "$@"
 exec /opt/sdc/bin/streamsets dc
 
