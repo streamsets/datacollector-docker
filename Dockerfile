@@ -20,30 +20,58 @@
 #
 
 FROM jeanblanchard/java:serverjre-8
-
 MAINTAINER Adam Kunicki <adam@streamsets.com>
-EXPOSE 18630
 
-# Default user, overridable via -e option when executing docker run.
-ENV SDC_USER=sdc \
-    SDC_DIST=/opt/streamsets-datacollector-1.1.3 \
+RUN apk update && apk add bash curl sed
+
+ENV SDC_USER=sdc
+ENV SDC_DIST="/opt/streamsets-datacollector" \
     SDC_DATA=/data \
     SDC_LOG=/logs \
-    SDC_CONF=/etc/sdc
+    SDC_CONF=/etc/sdc \
+    SDC_RESOURCES=/resources
+ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/libs-common-lib"
 
-RUN apk update && apk add bash curl
-RUN addgroup -S ${SDC_USER} && adduser -S ${SDC_USER} ${SDC_USER}
+RUN addgroup -S ${SDC_USER} && \
+  adduser -S ${SDC_USER} ${SDC_USER}
 
-ADD install.sh /tmp/
-RUN /tmp/install.sh
+ARG SDC_VERSION
+ENV SDC_VERSION ${SDC_VERSION:-1.1.3}
+
+# Download the SDC tarball, Extract tarball and cleanup
+RUN cd /tmp && \
+  curl -O -L "https://archives.streamsets.com/datacollector/${SDC_VERSION}/tarball/streamsets-datacollector-${SDC_VERSION}.tgz" && \
+  tar xzf "/tmp/streamsets-datacollector-${SDC_VERSION}.tgz" -C /opt/ && \
+  rm -rf "/tmp/streamsets-datacollector-${SDC_VERSION}.tgz" && \
+  mv "/opt/streamsets-datacollector-${SDC_VERSION}" "${SDC_DIST}"
+
+# Log to stdout for docker instead of sdc.log for compatibility with docker.
+RUN sed -i 's|DEBUG|INFO|' "${SDC_DIST}/etc/sdc-log4j.properties" && \
+sed -i 's|INFO, streamsets|INFO, stdout|' "${SDC_DIST}/etc/sdc-log4j.properties"
+
+# Create data directory and optional mount point
+RUN mkdir -p "${SDC_DATA}" /mnt "${SDC_LOG}" "${SDC_RESOURCES}"
+
+# Move configuration to /etc/sdc
+RUN mv "${SDC_DIST}/etc" "${SDC_CONF}"
+
+# Disable authentication by default, overriable with custom sdc.properties.
+RUN sed -i 's|\(http.authentication=\).*|\1none|' "${SDC_CONF}/sdc.properties"
+
+# Setup filesystem permissions
+RUN chown -R "${SDC_USER}:${SDC_USER}" "${SDC_CONF}" "${SDC_DATA}" "${SDC_LOG}" "${SDC_RESOURCES}"
 
 # /mnt is a generic mount point for mounting volumes from other containers or the host
 #   such as an input directory for directory spooling.
-# SDC_DATA is a volume for storing collector state. Do not share this between collectors.
+# SDC_DATA is a volume for storing collector state. Do not share this between containers.
 # SDC_CONF is a olume containing configuration of the data collector. This can be shared.
-VOLUME /mnt ${SDC_DATA} ${SDC_CONF}
+# SDC_LOG is an optional volume for file based logs. You must provide a custom sdc-log4j.properties file to use this.
+# SDC_RESOURCES is where resource files such as runtime:conf resources and Hadoop configuration can be placed.
+# STREAMSETS_LIBRARIES_EXTRA_DIR is where extra libraries such as JDBC drivers should go.
+VOLUME /mnt ${SDC_DATA} ${SDC_CONF} ${SDC_LOG} ${SDC_RESOURCES} ${STREAMSETS_LIBRARIES_EXTRA_DIR}
 
 USER ${SDC_USER}
-
-ENTRYPOINT ["/opt/streamsets-datacollector-1.1.3/bin/streamsets"]
+EXPOSE 18630
+COPY docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["dc"]

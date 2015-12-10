@@ -7,6 +7,8 @@ Basic Usage
 Detailed Usage
 --------------
 * You can specify a custom configs by mounting them as a volume to /etc/sdc or /etc/sdc/<specific config>
+* Configuration properties in `sdc.properties` can also be overridden at runtime by specifying them env vars prefixed with SDC_CONF
+  * For example http.port would be set as SDC_CONF_HTTP_PORT=12345
 * You *should* specify a data volume for your pipelines and pipeline state. The default configured location is /data. You can override this location by passing a different value to the environment variable SDC_DATA
 * You can also specify your own explicit port mappings, or arguments to the streamsets command.
 
