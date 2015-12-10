@@ -19,7 +19,7 @@ set_conf() {
 # In some environments such as Marathon $HOST and $PORT0 can be used to
 # determine the correct external URL to reach SDC.
 if [ ! -z "$HOST" ] && [ ! -z "$PORT0" ] && [ -z "$SDC_CONF_SDC_BASE_HTTP_URL" ]; then
-  export SDC_CONF_SDC_BASE_HTTP_URL="http://${HOST}/${PORT0}"
+  export SDC_CONF_SDC_BASE_HTTP_URL="http://${HOST}:${PORT0}"
 fi
 
 for e in $(env); do
