@@ -35,7 +35,8 @@ ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/libs-common-lib"
 RUN addgroup -S ${SDC_USER} && \
   adduser -S ${SDC_USER} ${SDC_USER}
 
-ARG SDC_VERSION
+# ARG is new in Docker 1.9 and not yet supported by Docker Hub Automated Builds
+# ARG SDC_VERSION
 ENV SDC_VERSION ${SDC_VERSION:-1.1.3}
 
 # Download the SDC tarball, Extract tarball and cleanup
