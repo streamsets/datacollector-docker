@@ -37,7 +37,7 @@ RUN addgroup -S ${SDC_USER} && \
 
 # ARG is new in Docker 1.9 and not yet supported by Docker Hub Automated Builds
 # ARG SDC_VERSION
-ENV SDC_VERSION ${SDC_VERSION:-1.1.3}
+ENV SDC_VERSION ${SDC_VERSION:-1.1.4}
 
 # Download the SDC tarball, Extract tarball and cleanup
 RUN cd /tmp && \
