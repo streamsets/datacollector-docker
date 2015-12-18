@@ -29,7 +29,7 @@ ENV SDC_USER=sdc \
     SDC_GROUP=sdc \
     SDC_UID=100 \
     SDC_GID=1000 \
-    SDC_VERSION=1.1.3 \
+    SDC_VERSION=1.1.4 \
     SDC_DIST=/opt/sdc \
     SDC_DATA=/data \
     SDC_LOG=/logs \
@@ -44,7 +44,7 @@ RUN curl -O -L https://archives.streamsets.com/datacollector/$SDC_VERSION/tarbal
 RUN curl -O -L https://jdbc.postgresql.org/download/postgresql-9.4-1206-jdbc42.jar
 
 # Download JDBC drivers for MySQL
-RUN curl -O -L http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.37.tar.gz
+RUN curl -O -L http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz
 
 # Extract tarball and cleanup
 RUN tar xzf /tmp/streamsets-datacollector-$SDC_VERSION.tgz -C /opt/
@@ -58,10 +58,10 @@ RUN mkdir -p ${SDC_DIST}-extras ${SDC_DIST}-extras/streamsets-datacollector-jdbc
 RUN mv /tmp/postgresql-9.4-1206-jdbc42.jar ${SDC_DIST}-extras/streamsets-datacollector-jdbc-postgresql/lib/
 
 # unpack the mysql driver
-RUN tar xzf /tmp/mysql-connector-java-5.1.37.tar.gz  -C /tmp/
-RUN mv /tmp/mysql-connector-java-5.1.37/mysql-connector-java-5.1.37-bin.jar ${SDC_DIST}-extras/streamsets-datacollector-jdbc-mysql/lib/
-RUN rm -rf /tmp/mysql-connector-java-5.1.37
-RUN rm /tmp/mysql-connector-java-5.1.37.tar.gz
+RUN tar xzf /tmp/mysql-connector-java-5.1.38.tar.gz  -C /tmp/
+RUN mv /tmp/mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar ${SDC_DIST}-extras/streamsets-datacollector-jdbc-mysql/lib/
+RUN rm -rf /tmp/mysql-connector-java-5.1.38
+RUN rm /tmp/mysql-connector-java-5.1.38.tar.gz
 
 # Disable authentication by default, overriable with custom sdc.properties.
 RUN sed -i 's|\(http.authentication=\).*|\1none|' ${SDC_DIST}/etc/sdc.properties
