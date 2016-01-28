@@ -37,13 +37,13 @@ RUN addgroup -S ${SDC_USER} && \
 
 # ARG is new in Docker 1.9 and not yet supported by Docker Hub Automated Builds
 # ARG SDC_VERSION
-ENV SDC_VERSION ${SDC_VERSION:-1.1.4}
+ENV SDC_VERSION ${SDC_VERSION:-1.2.0.0}
 
 # Download the SDC tarball, Extract tarball and cleanup
 RUN cd /tmp && \
-  curl -O -L "https://archives.streamsets.com/datacollector/${SDC_VERSION}/tarball/streamsets-datacollector-${SDC_VERSION}.tgz" && \
-  tar xzf "/tmp/streamsets-datacollector-${SDC_VERSION}.tgz" -C /opt/ && \
-  rm -rf "/tmp/streamsets-datacollector-${SDC_VERSION}.tgz" && \
+  curl -O -L "https://archives.streamsets.com/datacollector/${SDC_VERSION}/tarball/streamsets-datacollector-all-${SDC_VERSION}.tgz" && \
+  tar xzf "/tmp/streamsets-datacollector-all-${SDC_VERSION}.tgz" -C /opt/ && \
+  rm -rf "/tmp/streamsets-datacollector-all-${SDC_VERSION}.tgz" && \
   mv "/opt/streamsets-datacollector-${SDC_VERSION}" "${SDC_DIST}"
 
 # Log to stdout for docker instead of sdc.log for compatibility with docker.
