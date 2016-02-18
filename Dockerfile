@@ -25,11 +25,18 @@ MAINTAINER Adam Kunicki <adam@streamsets.com>
 RUN apk update && apk add bash curl sed
 
 ENV SDC_USER=sdc
+
+# The paths below should generatelly be attached to a VOLUME for persistence
+# SDC_DATA is a volume for storing collector state. Do not share this between containers.
+# SDC_LOG is an optional volume for file based logs. You must provide a custom sdc-log4j.properties file to use this.
+# SDC_CONF is where configuration files are stored. This can be shared.
+# SDC_RESOURCES is where resource files such as runtime:conf resources and Hadoop configuration can be placed.
 ENV SDC_DIST="/opt/streamsets-datacollector" \
     SDC_DATA=/data \
     SDC_LOG=/logs \
     SDC_CONF=/etc/sdc \
     SDC_RESOURCES=/resources
+# STREAMSETS_LIBRARIES_EXTRA_DIR is where extra libraries such as JDBC drivers should go.
 ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/libs-common-lib"
 
 RUN addgroup -S ${SDC_USER} && \
@@ -37,7 +44,7 @@ RUN addgroup -S ${SDC_USER} && \
 
 # ARG is new in Docker 1.9 and not yet supported by Docker Hub Automated Builds
 # ARG SDC_VERSION
-ENV SDC_VERSION ${SDC_VERSION:-1.2.0.1}
+ENV SDC_VERSION ${SDC_VERSION:-1.2.1.0}
 
 # Download the SDC tarball, Extract tarball and cleanup
 RUN cd /tmp && \
@@ -61,15 +68,6 @@ RUN sed -i 's|\(http.authentication=\).*|\1none|' "${SDC_CONF}/sdc.properties"
 
 # Setup filesystem permissions
 RUN chown -R "${SDC_USER}:${SDC_USER}" "${SDC_CONF}" "${SDC_DATA}" "${SDC_LOG}" "${SDC_RESOURCES}"
-
-# /mnt is a generic mount point for mounting volumes from other containers or the host
-#   such as an input directory for directory spooling.
-# SDC_DATA is a volume for storing collector state. Do not share this between containers.
-# SDC_CONF is a olume containing configuration of the data collector. This can be shared.
-# SDC_LOG is an optional volume for file based logs. You must provide a custom sdc-log4j.properties file to use this.
-# SDC_RESOURCES is where resource files such as runtime:conf resources and Hadoop configuration can be placed.
-# STREAMSETS_LIBRARIES_EXTRA_DIR is where extra libraries such as JDBC drivers should go.
-VOLUME /mnt ${SDC_DATA} ${SDC_CONF} ${SDC_LOG} ${SDC_RESOURCES} ${STREAMSETS_LIBRARIES_EXTRA_DIR}
 
 USER ${SDC_USER}
 EXPOSE 18630
