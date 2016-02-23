@@ -1,6 +1,6 @@
 # Dockerfiles for StreamSets Data Collector
 
-Version: 1.2.0.1
+Version: 1.2.1.0
 
 This is a (very distant) fork of [https://github.com/streamsets/datacollector-docker]
 to add some customizations and drivers.

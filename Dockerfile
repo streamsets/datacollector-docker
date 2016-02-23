@@ -29,12 +29,12 @@ ENV SDC_USER=sdc \
     SDC_GROUP=sdc \
     SDC_UID=100 \
     SDC_GID=1000 \
-    SDC_VERSION=1.2.0.1 \
+    SDC_VERSION=1.2.1.0 \
     SDC_DIST=/opt/sdc \
     SDC_DATA=/data \
     SDC_LOG=/logs \
     SDC_CONF=/etc/sdc\
-    POSTGRESQL_VERSION=9.4.1207 \
+    POSTGRESQL_VERSION=9.4.1208 \
     MYSQL_VERSION=5.1.38
 
 RUN apk update && apk add bash curl
