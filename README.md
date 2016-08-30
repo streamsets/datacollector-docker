@@ -1,4 +1,6 @@
-# Dockerfiles for StreamSets Data Collector
+#StreamSets Data Collector
+
+You must accept the [Oracle Binary Code License Agreement for Java SE](http://www.oracle.com/technetwork/java/javase/terms/license/index.html) to use this image.
 
 Basic Usage
 -----------
