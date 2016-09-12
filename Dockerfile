@@ -22,7 +22,7 @@
 FROM jeanblanchard/java:serverjre-8
 MAINTAINER Adam Kunicki <adam@streamsets.com>
 
-RUN apk update && apk add bash curl sed
+RUN apk update && apk add bash curl sed libstdc++
 
 ENV SDC_USER=sdc
 
