@@ -26,12 +26,16 @@ RUN apk update && apk add bash curl sed libstdc++ krb5-libs
 
 ENV SDC_USER=sdc
 
+# ARG is new in Docker 1.9 and not yet supported by Docker Hub Automated Builds
+# ARG SDC_VERSION
+ENV SDC_VERSION ${SDC_VERSION:-2.1.0.0}
+
 # The paths below should generatelly be attached to a VOLUME for persistence
 # SDC_DATA is a volume for storing collector state. Do not share this between containers.
 # SDC_LOG is an optional volume for file based logs. You must provide a custom sdc-log4j.properties file to use this.
 # SDC_CONF is where configuration files are stored. This can be shared.
 # SDC_RESOURCES is where resource files such as runtime:conf resources and Hadoop configuration can be placed.
-ENV SDC_DIST="/opt/streamsets-datacollector" \
+ENV SDC_DIST="/opt/streamsets-datacollector-${SDC_VERSION}" \
     SDC_DATA=/data \
     SDC_LOG=/logs \
     SDC_CONF=/etc/sdc \
@@ -42,16 +46,11 @@ ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/libs-common-lib"
 RUN addgroup -S ${SDC_USER} && \
   adduser -S ${SDC_USER} ${SDC_USER}
 
-# ARG is new in Docker 1.9 and not yet supported by Docker Hub Automated Builds
-# ARG SDC_VERSION
-ENV SDC_VERSION ${SDC_VERSION:-2.0.0.0}
-
 # Download the SDC tarball, Extract tarball and cleanup
 RUN cd /tmp && \
-  curl -O -L "https://archives.streamsets.com/datacollector/${SDC_VERSION}/tarball/streamsets-datacollector-all-${SDC_VERSION}.tgz" && \
-  tar xzf "/tmp/streamsets-datacollector-all-${SDC_VERSION}.tgz" -C /opt/ && \
-  rm -rf "/tmp/streamsets-datacollector-all-${SDC_VERSION}.tgz" && \
-  mv "/opt/streamsets-datacollector-${SDC_VERSION}" "${SDC_DIST}"
+  curl -O -L "https://archives.streamsets.com/datacollector/${SDC_VERSION}/tarball/streamsets-datacollector-core-${SDC_VERSION}.tgz" && \
+  tar xzf "/tmp/streamsets-datacollector-core-${SDC_VERSION}.tgz" -C /opt/ && \
+  rm -rf "/tmp/streamsets-datacollector-core-${SDC_VERSION}.tgz"
 
 # Log to stdout for docker instead of sdc.log for compatibility with docker.
 RUN sed -i 's|DEBUG|INFO|' "${SDC_DIST}/etc/sdc-log4j.properties" && \

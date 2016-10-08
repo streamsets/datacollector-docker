@@ -8,11 +8,11 @@ Basic Usage
 
 Detailed Usage
 --------------
-* You can specify a custom configs by mounting them as a volume to /etc/sdc or /etc/sdc/<specific config>
-* Configuration properties in `sdc.properties` can also be overridden at runtime by specifying them env vars prefixed with SDC_CONF
-  * For example http.port would be set as SDC_CONF_HTTP_PORT=12345
-* You *should* specify a data volume for your pipelines and pipeline state. The default configured location is /data. You can override this location by passing a different value to the environment variable SDC_DATA
-* You can also specify your own explicit port mappings, or arguments to the streamsets command.
+*   You can specify a custom configs by mounting them as a volume to /etc/sdc or /etc/sdc/<specific config>
+*   Configuration properties in `sdc.properties` can also be overridden at runtime by specifying them env vars prefixed with SDC_CONF
+*   For example http.port would be set as SDC_CONF_HTTP_PORT=12345
+*   You *should* specify a data volume for your pipelines and pipeline state. The default configured location is /data. You can override this location by passing a different value to the environment variable SDC_DATA
+*   You can also specify your own explicit port mappings, or arguments to the streamsets command.
 
 For example to run with a customized sdc.properties file, a local filsystem path to store pipelines, and statically map the default UI port you could use the following:
 
@@ -38,7 +38,7 @@ Create a volume using the process above. We'll call our `sdc-conf`
 `docker create -v /etc/sdc --name sdc-conf streamsets/datacollector:latest`
 `docker run --rm -it --volumes-from sdc-conf ubuntu bash`
 
-**_Tip:_** You can substitute `ubuntu` for your favorite base image. This is only
+**Tip:** You can substitute `ubuntu` for your favorite base image. This is only
 a temporary container for editing the base configuration files.
 
 Edit the configuration of SDC to your liking by modifying the files in `/etc/sdc`
