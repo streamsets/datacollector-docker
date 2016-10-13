@@ -22,7 +22,7 @@
 FROM jeanblanchard/java:serverjre-8
 MAINTAINER Adam Kunicki <adam@streamsets.com>
 
-RUN apt update && apt add bash curl sed libstdc++ krb5-libs
+RUN apk update && apk add bash curl sed libstdc++ krb5-libs
 
 ENV SDC_USER=sdc
 
