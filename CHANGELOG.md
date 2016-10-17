@@ -1,3 +1,8 @@
+## [2.1.0.1] - 2016-10-17
+### Changed
+- Data preview and Oracle CDC client origin fixes.
+- Data Collector version is now 2.1.0.1.
+
 ## [2.1.0.0] - 2016-10-13
 ### Changed
 - **_Important:_** With the introduction of the package manager UI, the image
