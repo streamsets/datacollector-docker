@@ -28,7 +28,7 @@ ENV SDC_USER=sdc
 
 # ARG is new in Docker 1.9 and not yet supported by Docker Hub Automated Builds
 # ARG SDC_VERSION
-ENV SDC_VERSION ${SDC_VERSION:-2.1.0.1}
+ENV SDC_VERSION ${SDC_VERSION:-2.1.0.2}
 
 # The paths below should generatelly be attached to a VOLUME for persistence
 # SDC_DATA is a volume for storing collector state. Do not share this between containers.
