@@ -1,3 +1,9 @@
+## [Streamsets Data Collector Release 2.1.0.2] - 2016-10-27
+### Changed
+- SDC-4283 Hive Metadata processor generates Avro schemas based on the current 
+  record instead of the entire table structure; Please read the release notes
+  for other fixes.
+
 ## [2.1.0.1] - 2016-10-17
 ### Changed
 - Data preview and Oracle CDC client origin fixes.
