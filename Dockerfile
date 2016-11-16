@@ -64,6 +64,8 @@ RUN mv "${SDC_DIST}/etc" "${SDC_CONF}"
 
 # Disable authentication by default, overriable with custom sdc.properties.
 RUN sed -i 's|\(http.authentication=\).*|\1none|' "${SDC_CONF}/sdc.properties"
+# Use short option -s as long option --status is not supported on alpine linux.
+RUN sed -i 's|--status|-s|' "${SDC_DIST}/libexec/_stagelibs"
 
 # Setup filesystem permissions
 RUN chown -R "${SDC_USER}:${SDC_USER}" "${SDC_DIST}/streamsets-libs" "${SDC_CONF}" "${SDC_DATA}" "${SDC_LOG}" "${SDC_RESOURCES}"
