@@ -1,3 +1,7 @@
+## [Streamsets Data Collector Release 2.2.0.0] - 2016-12-01
+### Changed
+- New features and bug fixes - please read the release notes on streamsets.com
+
 ## [Streamsets Data Collector Release 2.1.0.2] - 2016-10-27
 ### Changed
 - SDC-4283 Hive Metadata processor generates Avro schemas based on the current 
