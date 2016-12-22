@@ -1,3 +1,7 @@
+## [Streamsets Data Collector Release 2.2.1.0] - 2016-12-22
+### Changed
+- New features and bug fixes - please read the release notes on streamsets.com
+
 ## [Streamsets Data Collector Release 2.2.0.0] - 2016-12-01
 ### Changed
 - New features and bug fixes - please read the release notes on streamsets.com
