@@ -54,13 +54,17 @@ RUN cd /tmp && \
 
 # Log to stdout for docker instead of sdc.log for compatibility with docker.
 RUN sed -i 's|DEBUG|INFO|' "${SDC_DIST}/etc/sdc-log4j.properties" && \
-sed -i 's|INFO, streamsets|INFO, stdout|' "${SDC_DIST}/etc/sdc-log4j.properties"
+  sed -i 's|INFO, streamsets|INFO, stdout|' "${SDC_DIST}/etc/sdc-log4j.properties"
 
 # Create data directory and optional mount point
 RUN mkdir -p "${SDC_DATA}" /mnt "${SDC_LOG}" "${SDC_RESOURCES}"
 
 # Move configuration to /etc/sdc
 RUN mv "${SDC_DIST}/etc" "${SDC_CONF}"
+
+# Don't blacklist Java 8 only stages as this image already includes Java 8
+RUN sed -i -E '/^\s+streamsets-datacollector-(apache-solr|elasticsearch)\w+-lib,?\\?/d' "${SDC_CONF}/sdc.properties" && \
+  sed -i -r 's/(^\s+streamsets-datacollector-mapr_5_2-lib),\\/\1/' "${SDC_CONF}/sdc.properties"
 
 # Disable authentication by default, overriable with custom sdc.properties.
 RUN sed -i 's|\(http.authentication=\).*|\1none|' "${SDC_CONF}/sdc.properties"
