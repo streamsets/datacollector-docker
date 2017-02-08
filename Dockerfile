@@ -74,6 +74,9 @@ RUN sed -i 's|--status|-s|' "${SDC_DIST}/libexec/_stagelibs"
 # Setup filesystem permissions
 RUN chown -R "${SDC_USER}:${SDC_USER}" "${SDC_DIST}/streamsets-libs" "${SDC_CONF}" "${SDC_DATA}" "${SDC_LOG}" "${SDC_RESOURCES}"
 
+# Disable GC logging by default since there is no log volume
+ENV SDC_GC_LOGGING=false
+
 USER ${SDC_USER}
 EXPOSE 18630
 COPY docker-entrypoint.sh /
