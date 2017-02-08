@@ -35,7 +35,7 @@ ENV SDC_VERSION ${SDC_VERSION:-2.4.0.0-SNAPSHOT}
 # SDC_LOG is an optional volume for file based logs. You must provide a custom sdc-log4j.properties file to use this.
 # SDC_CONF is where configuration files are stored. This can be shared.
 # SDC_RESOURCES is where resource files such as runtime:conf resources and Hadoop configuration can be placed.
-ENV SDC_DIST="/opt/streamsets-datacollector-${SDC_VERSION}" \
+ENV SDC_DIST="/opt/streamsets-datacollector" \
     SDC_DATA=/data \
     SDC_LOG=/logs \
     SDC_CONF=/etc/sdc \
@@ -50,7 +50,8 @@ RUN addgroup -S ${SDC_USER} && \
 RUN cd /tmp && \
   curl -O -L "http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-${SDC_VERSION}.tgz" && \
   tar xzf "/tmp/streamsets-datacollector-core-${SDC_VERSION}.tgz" -C /opt/ && \
-  rm -rf "/tmp/streamsets-datacollector-core-${SDC_VERSION}.tgz"
+  rm -rf "/tmp/streamsets-datacollector-core-${SDC_VERSION}.tgz" && \
+  mv /opt/streamsets-datacollector-${SDC_VERSION} ${SDC_DIST}
 
 # Log to stdout for docker instead of sdc.log for compatibility with docker.
 RUN sed -i 's|DEBUG|INFO|' "${SDC_DIST}/etc/sdc-log4j.properties" && \
