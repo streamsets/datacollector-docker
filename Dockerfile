@@ -28,7 +28,7 @@ ENV SDC_USER=sdc
 
 # ARG is new in Docker 1.9 and not yet supported by Docker Hub Automated Builds
 # ARG SDC_VERSION
-ENV SDC_VERSION ${SDC_VERSION:-2.3.0.0}
+ENV SDC_VERSION ${SDC_VERSION:-2.4.0.0-SNAPSHOT}
 
 # The paths below should generatelly be attached to a VOLUME for persistence
 # SDC_DATA is a volume for storing collector state. Do not share this between containers.
@@ -48,7 +48,7 @@ RUN addgroup -S ${SDC_USER} && \
 
 # Download the SDC tarball, Extract tarball and cleanup
 RUN cd /tmp && \
-  curl -O -L "https://archives.streamsets.com/datacollector/${SDC_VERSION}/tarball/streamsets-datacollector-core-${SDC_VERSION}.tgz" && \
+  curl -O -L "http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-${SDC_VERSION}.tgz" && \
   tar xzf "/tmp/streamsets-datacollector-core-${SDC_VERSION}.tgz" -C /opt/ && \
   rm -rf "/tmp/streamsets-datacollector-core-${SDC_VERSION}.tgz"
 
