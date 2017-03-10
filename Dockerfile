@@ -41,7 +41,7 @@ ENV SDC_DIST="/opt/streamsets-datacollector-${SDC_VERSION}" \
     SDC_CONF=/etc/sdc \
     SDC_RESOURCES=/resources
 # STREAMSETS_LIBRARIES_EXTRA_DIR is where extra libraries such as JDBC drivers should go.
-ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/libs-common-lib"
+ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/streamsets-libs-extras"
 
 RUN addgroup -S ${SDC_USER} && \
   adduser -S ${SDC_USER} ${SDC_USER}
@@ -72,7 +72,7 @@ RUN sed -i 's|\(http.authentication=\).*|\1none|' "${SDC_CONF}/sdc.properties"
 RUN sed -i 's|--status|-s|' "${SDC_DIST}/libexec/_stagelibs"
 
 # Setup filesystem permissions
-RUN chown -R "${SDC_USER}:${SDC_USER}" "${SDC_DIST}/streamsets-libs" "${SDC_CONF}" "${SDC_DATA}" "${SDC_LOG}" "${SDC_RESOURCES}"
+RUN chown -R "${SDC_USER}:${SDC_USER}" "${SDC_DIST}/streamsets-libs" "${SDC_CONF}" "${SDC_DATA}" "${SDC_LOG}" "${SDC_RESOURCES}" "${STREAMSETS_LIBRARIES_EXTRA_DIR}"
 
 # Disable GC logging by default since there is no log volume
 ENV SDC_GC_LOGGING=false
