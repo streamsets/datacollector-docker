@@ -22,7 +22,7 @@
 FROM jeanblanchard/java:serverjre-8
 MAINTAINER Adam Kunicki <adam@streamsets.com>
 
-ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-2.5.0.0-SNAPSHOT.tgz
+ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/2.4/2.4.1.0/RC2/tarball/streamsets-datacollector-core-2.4.1.0.tgz
 ARG SDC_USER=sdc
 
 RUN apk --no-cache add bash \
