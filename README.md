@@ -2,9 +2,15 @@
 
 You must accept the [Oracle Binary Code License Agreement for Java SE](http://www.oracle.com/technetwork/java/javase/terms/license/index.html) to use this image.
 
+The Docker image for Data Collector version 2.4.1.0 now uses the form type of file-based authentication by default.
+As a result, you must use a Data Collector user account to log in to the Data Collector.
+If you haven't set up custom user accounts, you can use the admin account shipped with the Data Collector.
+The default login is: admin / admin.
+Earlier versions of the Docker image used no authentication.
+
 Basic Usage
 -----------
-`docker run -p 18630:18630 -d streamsets/datacollector`
+`docker run --restart on-failure -p 18630:18630 -d --name streamsets-dc streamsets/datacollector`
 
 Detailed Usage
 --------------
@@ -20,7 +26,7 @@ Detailed Usage
 For example to run with a customized sdc.properties file, a local filsystem path to store pipelines, and statically map
 the default UI port you could use the following:
 
-`docker run -v $PWD/sdc.properties:/etc/sdc/sdc.properties:ro -v $PWD/sdc-data:/data:rw -p 18630:18630 -d streamsets/datacollector dc`
+`docker run --restart on-failure -v $PWD/sdc.properties:/etc/sdc/sdc.properties:ro -v $PWD/sdc-data:/data:rw -p 18630:18630 -d streamsets/datacollector dc`
 
 Creating a Data Volumes
 -----------------------
