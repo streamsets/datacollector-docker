@@ -24,6 +24,7 @@ MAINTAINER Adam Kunicki <adam@streamsets.com>
 
 ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-2.5.0.0-SNAPSHOT.tgz
 ARG SDC_USER=sdc
+ARG SDC_VERSION=2.5.0.0-SNAPSHOT
 
 RUN apk --no-cache add bash \
     curl \
@@ -39,7 +40,7 @@ RUN apk --no-cache add bash \
 # STREAMSETS_LIBRARIES_EXTRA_DIR is where extra libraries such as JDBC drivers should go.
 ENV SDC_CONF=/etc/sdc \
     SDC_DATA=/data \
-    SDC_DIST="/opt/streamsets-datacollector" \
+    SDC_DIST="/opt/streamsets-datacollector-${SDC_VERSION}" \
     SDC_LOG=/logs \
     SDC_RESOURCES=/resources
 ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/streamsets-libs-extras"
@@ -49,8 +50,8 @@ RUN addgroup -S ${SDC_USER} && \
 
 RUN cd /tmp && \
     curl -o /tmp/sdc.tgz -L "${SDC_URL}" && \
-    mkdir /opt/streamsets-datacollector && \
-    tar xzf /tmp/sdc.tgz --strip-components 1 -C /opt/streamsets-datacollector && \
+    mkdir /opt/streamsets-datacollector-${SDC_VERSION} && \
+    tar xzf /tmp/sdc.tgz --strip-components 1 -C /opt/streamsets-datacollector-${SDC_VERSION} && \
     rm -rf /tmp/sdc.tgz
 
 # Add logging to stdout to make logs visible through `docker logs`.
