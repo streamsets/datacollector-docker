@@ -26,6 +26,10 @@ ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollect
 ARG SDC_USER=sdc
 ARG SDC_VERSION=2.5.0.0-SNAPSHOT
 
+# We set a UID/GID for the SDC user because certain test environments require these to be consistent throughout
+# the cluster. We use 20159 because it's above the default value of YARN's min.user.id property.
+ARG SDC_UID=20159
+
 RUN apk --no-cache add bash \
     curl \
     krb5-libs \
@@ -45,8 +49,8 @@ ENV SDC_CONF=/etc/sdc \
     SDC_RESOURCES=/resources
 ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/streamsets-libs-extras"
 
-RUN addgroup -S ${SDC_USER} && \
-    adduser -S ${SDC_USER} ${SDC_USER}
+RUN addgroup -S -g ${SDC_UID} ${SDC_USER} && \
+    adduser -S -u ${SDC_UID} -G ${SDC_USER} ${SDC_USER}
 
 RUN cd /tmp && \
     curl -o /tmp/sdc.tgz -L "${SDC_URL}" && \
