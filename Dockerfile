@@ -34,6 +34,7 @@ RUN apk --no-cache add bash \
     curl \
     krb5-libs \
     libstdc++ \
+    libuuid \
     sed
 
 # The paths below should generally be attached to a VOLUME for persistence.
