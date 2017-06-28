@@ -21,6 +21,10 @@ set_conf() {
 if [ ! -z "$HOST" ] && [ ! -z "$PORT0" ] && [ -z "$SDC_CONF_SDC_BASE_HTTP_URL" ]; then
   export SDC_CONF_SDC_BASE_HTTP_URL="http://${HOST}:${PORT0}"
 fi
+# if SDC_CONF_HTTP_PORT hasn't already been defined but PORT0, use PORT0
+if [ ! -z "$PORT0" ] && [ -z "$SDC_CONF_HTTP_PORT" ]; then
+  export SDC_CONF_HTTP_PORT=$PORT0
+fi
 
 for e in $(env); do
   key=${e%=*}
