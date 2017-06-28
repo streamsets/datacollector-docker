@@ -2,16 +2,13 @@
 
 You must accept the [Oracle Binary Code License Agreement for Java SE](http://www.oracle.com/technetwork/java/javase/terms/license/index.html) to use this image.
 
-The Docker image for Data Collector version 2.4.1.0 now uses the form type of file-based authentication by default.
+The Docker image for Data Collector version from 2.4.1.0 now uses the form type of file-based authentication by default.
 As a result, you must use a Data Collector user account to log in to the Data Collector.
 If you haven't set up custom user accounts, you can use the admin account shipped with the Data Collector.
 The default login is: admin / admin.
 Earlier versions of the Docker image used no authentication.
 
-Version: 1.2.2.0
-
-This is a (very distant) fork of [https://github.com/streamsets/datacollector-docker]
-to add some customizations and drivers.
+Version: 2.5.0.0-SNAPSHOT
 
 Basic Usage
 -----------
@@ -26,7 +23,11 @@ Detailed Usage
 *   You *should at a minimum* specify a data volume for the data directory and stage libraries. The default configured
     location is /data for $SDC_DATA. You can override this location by passing a different value to the environment
     variable SDC_DATA. Creating a volume for additional stage libraries is described in more detail below.
-*   You can also specify your own explicit port mappings, or arguments to the streamsets command.
+*   You can also specify your own explicit port mappings, or arguments
+to the streamsets command.
+*   If you are using Marathon, the existence of PORT0 and
+    non-existence of SDC_CONF_HTTP_PORT environment variable will set
+    SDC_CONF_HTTP_PORT to PORT0
 
 For example to run with a customized sdc.properties file, a local filsystem path to store pipelines, and statically map
 the default UI port you could use the following:
