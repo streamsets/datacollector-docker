@@ -1,4 +1,4 @@
-#StreamSets Data Collector
+# StreamSets Data Collector
 
 You must accept the [Oracle Binary Code License Agreement for Java SE](http://www.oracle.com/technetwork/java/javase/terms/license/index.html) to use this image.
 
@@ -8,7 +8,7 @@ If you haven't set up custom user accounts, you can use the admin account shippe
 The default login is: admin / admin.
 Earlier versions of the Docker image used no authentication.
 
-Version: 2.5.0.0-SNAPSHOT
+Version: 2.6.0.1
 
 Basic Usage
 -----------
