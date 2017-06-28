@@ -20,82 +20,70 @@
 #
 
 FROM jeanblanchard/java:serverjre-8
+MAINTAINER Adam Kunicki <adam@streamsets.com>
 
-MAINTAINER Morton Swimmer
-EXPOSE 18630
+ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-2.5.0.0-SNAPSHOT.tgz
+ARG SDC_USER=sdc
+ARG SDC_VERSION=2.5.0.0-SNAPSHOT
 
-# Default user, overridable via -e option when executing docker run.
-ENV SDC_USER=sdc \
-    SDC_GROUP=sdc \
-    SDC_UID=100 \
-    SDC_GID=1000 \
-    SDC_VERSION=1.2.2.0 \
-    SDC_DIST=/opt/sdc \
+# We set a UID/GID for the SDC user because certain test environments require these to be consistent throughout
+# the cluster. We use 20159 because it's above the default value of YARN's min.user.id property.
+ARG SDC_UID=20159
+
+RUN apk --no-cache add bash \
+    curl \
+    krb5-libs \
+    libstdc++ \
+    libuuid \
+    sed
+
+# The paths below should generally be attached to a VOLUME for persistence.
+# SDC_CONF is where configuration files are stored. This can be shared.
+# SDC_DATA is a volume for storing collector state. Do not share this between containers.
+# SDC_LOG is an optional volume for file based logs.
+# SDC_RESOURCES is where resource files such as runtime:conf resources and Hadoop configuration can be placed.
+# STREAMSETS_LIBRARIES_EXTRA_DIR is where extra libraries such as JDBC drivers should go.
+ENV SDC_CONF=/etc/sdc \
     SDC_DATA=/data \
+    SDC_DIST="/opt/streamsets-datacollector-${SDC_VERSION}" \
     SDC_LOG=/logs \
-    SDC_CONF=/etc/sdc\
-    POSTGRESQL_VERSION=9.4.1208 \
-    MYSQL_VERSION=5.1.38
+    SDC_RESOURCES=/resources
+ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/streamsets-libs-extras"
 
-RUN apk update && apk add bash curl
+RUN addgroup -S -g ${SDC_UID} ${SDC_USER} && \
+    adduser -S -u ${SDC_UID} -G ${SDC_USER} ${SDC_USER}
 
-WORKDIR /tmp
-RUN curl -O -L https://archives.streamsets.com/datacollector/${SDC_VERSION}/tarball/streamsets-datacollector-all-${SDC_VERSION}.tgz
+RUN cd /tmp && \
+    curl -o /tmp/sdc.tgz -L "${SDC_URL}" && \
+    mkdir /opt/streamsets-datacollector-${SDC_VERSION} && \
+    tar xzf /tmp/sdc.tgz --strip-components 1 -C /opt/streamsets-datacollector-${SDC_VERSION} && \
+    rm -rf /tmp/sdc.tgz
 
-# Download JDBC drivers for PostgresQL
-RUN curl -O -L https://jdbc.postgresql.org/download/postgresql-${POSTGRESQL_VERSION}.jar
+# Add logging to stdout to make logs visible through `docker logs`.
+RUN sed -i 's|INFO, streamsets|INFO, streamsets,stdout|' "${SDC_DIST}/etc/sdc-log4j.properties"
 
-# Download JDBC drivers for MySQL
-RUN curl -O -L http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-${MYSQL_VERSION}.tar.gz
-
-# Extract tarball and cleanup
-RUN tar xzf /tmp/streamsets-datacollector-all-${SDC_VERSION}.tgz -C /opt/
-RUN mv /opt/streamsets-datacollector-${SDC_VERSION} ${SDC_DIST}
-RUN rm -rf /tmp/streamsets-datacollector-*.tgz
-
-# Create the drivers directory
-RUN mkdir -p ${SDC_DIST}-extras ${SDC_DIST}-extras/streamsets-datacollector-jdbc-postgresql/lib ${SDC_DIST}-extras/streamsets-datacollector-jdbc-mysql/lib
-
-# Move the postgresql jdbc driver in place
-RUN mv /tmp/postgresql-${POSTGRESQL_VERSION}.jar ${SDC_DIST}-extras/streamsets-datacollector-jdbc-postgresql/lib/
-
-# unpack the mysql driver
-RUN tar xzf /tmp/mysql-connector-java-${MYSQL_VERSION}.tar.gz  -C /tmp/
-RUN mv /tmp/mysql-connector-java-${MYSQL_VERSION}/mysql-connector-java-${MYSQL_VERSION}-bin.jar ${SDC_DIST}-extras/streamsets-datacollector-jdbc-mysql/lib/
-RUN rm -rf /tmp/mysql-connector-java-${MYSQL_VERSION}
-RUN rm /tmp/mysql-connector-java-${MYSQL_VERSION}.tar.gz
-
-# Disable authentication by default, overriable with custom sdc.properties.
-RUN sed -i 's|\(http.authentication=\).*|\1none|' ${SDC_DIST}/etc/sdc.properties
-
-# add our directory to the environment
-RUN echo "export STREAMSETS_LIBRARIES_EXTRA_DIR=${SDC_DIST}-extras" >> ${SDC_DIST}/libexec/sdc-env.sh
-
-# Log to stdout for docker instead of sdc.log for compatibility with docker.
-RUN sed -i 's|DEBUG|INFO|' ${SDC_DIST}/etc/sdc-log4j.properties
-RUN sed -i 's|INFO, streamsets|INFO, stdout|' ${SDC_DIST}/etc/sdc-log4j.properties
-
-RUN echo 'grant codebase "file://${SDC_DIST}-extras/-" {' >> ${SDC_DIST}/etc/sdc-security.policy
-RUN echo '  permission java.security.AllPermission;'      >> ${SDC_DIST}/etc/sdc-security.policy
-RUN echo '};'                                             >> ${SDC_DIST}/etc/sdc-security.policy
-
-# Create data directory and optional mount point
-RUN mkdir -p ${SDC_DATA} /mnt ${SDC_LOG}
+# Create necessary directories.
+RUN mkdir -p /mnt \
+    "${SDC_DATA}" \
+    "${SDC_LOG}" \
+    "${SDC_RESOURCES}"
 
 # Move configuration to /etc/sdc
-RUN mv ${SDC_DIST}/etc ${SDC_CONF}
+RUN mv "${SDC_DIST}/etc" "${SDC_CONF}"
 
-# Setup filesystem permissions
-#RUN chown ${SDC_USER}:${SDC_USER} ${SDC_DATA} ${SDC_LOG}
+# Use short option -s as long option --status is not supported on alpine linux.
+RUN sed -i 's|--status|-s|' "${SDC_DIST}/libexec/_stagelibs"
 
-# /mnt is a generic mount point for mounting volumes from other containers or the host
-#   such as an input directory for directory spooling.
-# SDC_DATA is a volume for storing collector state. Do not share this between collectors.
-# SDC_CONF is a olume containing configuration of the data collector. This can be shared.
-VOLUME /mnt ${SDC_DATA} ${SDC_CONF}
+# Setup filesystem permissions.
+RUN chown -R "${SDC_USER}:${SDC_USER}" "${SDC_DIST}/streamsets-libs" \
+    "${SDC_CONF}" \
+    "${SDC_DATA}" \
+    "${SDC_LOG}" \
+    "${SDC_RESOURCES}" \
+    "${STREAMSETS_LIBRARIES_EXTRA_DIR}"
 
-COPY init.sh /init.sh
-RUN chmod +x /init.sh
-
-ENTRYPOINT [ "/init.sh" ]
-
+USER ${SDC_USER}
+EXPOSE 18630
+COPY docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["dc", "-exec"]
