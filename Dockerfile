@@ -22,9 +22,9 @@
 FROM jeanblanchard/java:serverjre-8
 MAINTAINER Adam Kunicki <adam@streamsets.com>
 
-ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-2.5.0.0-SNAPSHOT.tgz
+ARG SDC_URL=https://archives.streamsets.com/datacollector/2.6.0.1/tarball/streamsets-datacollector-core-2.6.0.1.tgz
 ARG SDC_USER=sdc
-ARG SDC_VERSION=2.5.0.0-SNAPSHOT
+ARG SDC_VERSION=2.6.0.1
 
 # We set a UID/GID for the SDC user because certain test environments require these to be consistent throughout
 # the cluster. We use 20159 because it's above the default value of YARN's min.user.id property.
@@ -33,6 +33,7 @@ ARG SDC_UID=20159
 RUN apk --no-cache add bash \
     curl \
     krb5-libs \
+    krb5 \
     libstdc++ \
     libuuid \
     sed
