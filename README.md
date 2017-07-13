@@ -1,12 +1,12 @@
-#StreamSets Data Collector
+# StreamSets Data Collector
 
 You must accept the [Oracle Binary Code License Agreement for Java SE](http://www.oracle.com/technetwork/java/javase/terms/license/index.html) to use this image.
 
-The Docker image for Data Collector version 2.4.1.0 now uses the form type of file-based authentication by default.
+The Docker image for Data Collector starting from version 2.4.1.0 now uses the form type of file-based authentication by default.
 As a result, you must use a Data Collector user account to log in to the Data Collector.
 If you haven't set up custom user accounts, you can use the admin account shipped with the Data Collector.
 The default login is: admin / admin.
-Earlier versions of the Docker image used no authentication.
+Earlier versions of the Docker image required no authentication.
 
 Basic Usage
 -----------
