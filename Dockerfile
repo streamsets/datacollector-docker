@@ -33,6 +33,7 @@ ARG SDC_UID=20159
 RUN apk --no-cache add bash \
     curl \
     krb5-libs \
+    krb5 \
     libstdc++ \
     libuuid \
     sed
