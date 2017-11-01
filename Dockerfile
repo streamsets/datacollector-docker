@@ -15,7 +15,7 @@
 #
 
 FROM alpine:3.6
-MAINTAINER Adam Kunicki <adam@streamsets.com>
+LABEL maintainer="Adam Kunicki <adam@streamsets.com>"
 
 # glibc installation courtesy https://github.com/jeanblanchard/docker-alpine-glibc
 ENV GLIBC_VERSION 2.25-r0
@@ -34,11 +34,11 @@ RUN apk add --update curl && \
 # JRE installation courtesy https://github.com/jeanblanchard/docker-java
 # Java Version
 ENV JAVA_VERSION_MAJOR 8
-ENV JAVA_VERSION_MINOR 131
-ENV JAVA_VERSION_BUILD 11
+ENV JAVA_VERSION_MINOR 151
+ENV JAVA_VERSION_BUILD 12
 ENV JAVA_PACKAGE       server-jre
-ENV JAVA_SHA256_SUM    a80634d17896fe26e432f6c2b589ef6485685b2e717c82cd36f8f747d40ec84b
-ENV JAVA_URL_ELEMENT   d54c1d3a095b4ff2b6607d096fa80163
+ENV JAVA_SHA256_SUM    123b1d755416aa7579abc03f01ab946e612e141b6f7564130f2ada00ed913f1d
+ENV JAVA_URL_ELEMENT e758a0de34e24606bca991d704f6dcbf
 
 # Download and unarchive Java
 RUN apk add --update curl && \
@@ -60,9 +60,9 @@ ENV JAVA_HOME /opt/jdk
 ENV PATH ${PATH}:${JAVA_HOME}/bin
 
 # Begin Data Collector installation
-ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-2.5.0.0-SNAPSHOT.tgz
+ARG SDC_VERSION=3.0.0.0-SNAPSHOT
+ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-${SDC_VERSION}.tgz
 ARG SDC_USER=sdc
-ARG SDC_VERSION=2.5.0.0-SNAPSHOT
 
 # We set a UID/GID for the SDC user because certain test environments require these to be consistent throughout
 # the cluster. We use 20159 because it's above the default value of YARN's min.user.id property.
