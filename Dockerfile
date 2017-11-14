@@ -59,11 +59,6 @@ RUN apk add --update curl && \
 ENV JAVA_HOME /opt/jdk
 ENV PATH ${PATH}:${JAVA_HOME}/bin
 
-# Begin Data Collector installation
-ARG SDC_VERSION=3.0.0.0-SNAPSHOT
-ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-${SDC_VERSION}.tgz
-ARG SDC_USER=sdc
-
 # We set a UID/GID for the SDC user because certain test environments require these to be consistent throughout
 # the cluster. We use 20159 because it's above the default value of YARN's min.user.id property.
 ARG SDC_UID=20159
@@ -76,50 +71,29 @@ RUN apk --no-cache add bash \
     libuuid \
     sed
 
+# Begin Data Collector installation
+ARG SDC_VERSION=3.0.0.0-SNAPSHOT
+ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-${SDC_VERSION}.tgz
+ARG SDC_USER=sdc
+
 # The paths below should generally be attached to a VOLUME for persistence.
 # SDC_CONF is where configuration files are stored. This can be shared.
 # SDC_DATA is a volume for storing collector state. Do not share this between containers.
 # SDC_LOG is an optional volume for file based logs.
 # SDC_RESOURCES is where resource files such as runtime:conf resources and Hadoop configuration can be placed.
 # STREAMSETS_LIBRARIES_EXTRA_DIR is where extra libraries such as JDBC drivers should go.
+# USER_LIBRARIES_DIR is where custom stage libraries are installed.
 ENV SDC_CONF=/etc/sdc \
     SDC_DATA=/data \
     SDC_DIST="/opt/streamsets-datacollector-${SDC_VERSION}" \
     SDC_LOG=/logs \
-    SDC_RESOURCES=/resources
+    SDC_RESOURCES=/resources \
+    USER_LIBRARIES_DIR=/opt/streamsets-datacollector-user-libs
 ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/streamsets-libs-extras"
 
-RUN addgroup -S -g ${SDC_UID} ${SDC_USER} && \
-    adduser -S -u ${SDC_UID} -G ${SDC_USER} ${SDC_USER}
-
-RUN cd /tmp && \
-    curl -o /tmp/sdc.tgz -L "${SDC_URL}" && \
-    mkdir /opt/streamsets-datacollector-${SDC_VERSION} && \
-    tar xzf /tmp/sdc.tgz --strip-components 1 -C /opt/streamsets-datacollector-${SDC_VERSION} && \
-    rm -rf /tmp/sdc.tgz
-
-# Add logging to stdout to make logs visible through `docker logs`.
-RUN sed -i 's|INFO, streamsets|INFO, streamsets,stdout|' "${SDC_DIST}/etc/sdc-log4j.properties"
-
-# Create necessary directories.
-RUN mkdir -p /mnt \
-    "${SDC_DATA}" \
-    "${SDC_LOG}" \
-    "${SDC_RESOURCES}"
-
-# Move configuration to /etc/sdc
-RUN mv "${SDC_DIST}/etc" "${SDC_CONF}"
-
-# Use short option -s as long option --status is not supported on alpine linux.
-RUN sed -i 's|--status|-s|' "${SDC_DIST}/libexec/_stagelibs"
-
-# Setup filesystem permissions.
-RUN chown -R "${SDC_USER}:${SDC_USER}" "${SDC_DIST}/streamsets-libs" \
-    "${SDC_CONF}" \
-    "${SDC_DATA}" \
-    "${SDC_LOG}" \
-    "${SDC_RESOURCES}" \
-    "${STREAMSETS_LIBRARIES_EXTRA_DIR}"
+# Run the SDC configuration script.
+COPY sdc-configure.sh /
+RUN /sdc-configure.sh && rm /sdc-configure.sh
 
 USER ${SDC_USER}
 EXPOSE 18630
