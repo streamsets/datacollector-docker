@@ -28,6 +28,11 @@ rm -rf /tmp/sdc.tgz
 # Add logging to stdout to make logs visible through `docker logs`.
 sed -i 's|INFO, streamsets|INFO, streamsets,stdout|' "${SDC_DIST}/etc/sdc-log4j.properties"
 
+# Workaround to address SDC-8005.
+if [ -d "${SDC_DIST}/user-libs" ]; then
+  cp -R "${SDC_DIST}/user-libs" "${USER_LIBRARIES_DIR}"
+fi
+
 # Create necessary directories.
 mkdir -p /mnt \
     "${SDC_DATA}" \
