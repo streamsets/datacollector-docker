@@ -36,11 +36,11 @@ RUN apk add --update curl && \
 # JRE installation courtesy https://github.com/jeanblanchard/docker-java
 # Java Version
 ENV JAVA_VERSION_MAJOR 8
-ENV JAVA_VERSION_MINOR 151
+ENV JAVA_VERSION_MINOR 161
 ENV JAVA_VERSION_BUILD 12
 ENV JAVA_PACKAGE       server-jre
-ENV JAVA_SHA256_SUM    123b1d755416aa7579abc03f01ab946e612e141b6f7564130f2ada00ed913f1d
-ENV JAVA_URL_ELEMENT e758a0de34e24606bca991d704f6dcbf
+ENV JAVA_SHA256_SUM    eb5776cacfd57fbf0ffb907f68c58a1cc6f823e761f4e75d78a6e3240846534e
+ENV JAVA_URL_ELEMENT 2f38c3b165be4555a1fa6e98c45e0808
 
 # Download and unarchive Java
 RUN apk add --update curl && \
