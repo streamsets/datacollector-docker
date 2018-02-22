@@ -74,7 +74,7 @@ RUN apk --no-cache add bash \
     sed
 
 # Begin Data Collector installation
-ARG SDC_VERSION=3.0.0.0-SNAPSHOT
+ARG SDC_VERSION=3.2.0.0-SNAPSHOT
 ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-${SDC_VERSION}.tgz
 ARG SDC_USER=sdc
 
@@ -96,6 +96,10 @@ ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/streamsets-libs-extras"
 # Run the SDC configuration script.
 COPY sdc-configure.sh /
 RUN /sdc-configure.sh && rm /sdc-configure.sh
+
+# Install any additional stage libraries if requested
+ARG SDC_LIBS
+RUN if [ -n "${SDC_LIBS}" ]; then "${SDC_DIST}/bin/streamsets" stagelibs -install="${SDC_LIBS}"; fi
 
 USER ${SDC_USER}
 EXPOSE 18630
