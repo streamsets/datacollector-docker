@@ -1,0 +1,1 @@
+# All files or subdirectories placed in this directory will be copied to the image's ${SDC_RESOURCES} directory

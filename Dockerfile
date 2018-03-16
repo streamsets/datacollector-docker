@@ -101,6 +101,15 @@ RUN /sdc-configure.sh && rm /sdc-configure.sh
 ARG SDC_LIBS
 RUN if [ -n "${SDC_LIBS}" ]; then "${SDC_DIST}/bin/streamsets" stagelibs -install="${SDC_LIBS}"; fi
 
+# Copy any local files in the $PROJECT_ROOT/resources dir to the SDC_RESOURCES dir
+COPY --chown=sdc:sdc resources/ ${SDC_RESOURCES}/
+
+# Copy any local "sdc-extras" libs to STREAMSETS_LIBRARIES_EXTRA_DIR
+# Local files should be placed in appropriate stage lib subdirectories.  For example
+# to add a JDBC driver like ojdbc8.jar to the JDBC stage lib, the local file ojdbc8.jar
+# should be at $PROJECT_ROOT/sdc-extras/streamsets-datacollector-jdbc-lib/lib/ojdbc8.jar
+COPY --chown=sdc:sdc sdc-extras/ ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
+
 USER ${SDC_USER}
 EXPOSE 18630
 COPY docker-entrypoint.sh /
