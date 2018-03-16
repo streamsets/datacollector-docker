@@ -22,6 +22,8 @@ Detailed Usage
     location is /data for $SDC_DATA. You can override this location by passing a different value to the environment
     variable SDC_DATA. Creating a volume for additional stage libraries is described in more detail below.
 *   You can also specify your own explicit port mappings, or arguments to the streamsets command.
+*   Any files or directories placed in the project's "resources" directory will be copied to the image's ${SDC_RESOURCES} directory
+*   Any files or directories placed in the project's "sdc-extras" directory will be copied to the image's ${STREAMSETS_LIBRARIES_EXTRA_DIR}.  See the Dockerfile for details
 
 For example to run with a customized sdc.properties file, a local filsystem path to store pipelines, and statically map
 the default UI port you could use the following:
