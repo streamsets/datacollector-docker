@@ -36,11 +36,11 @@ RUN apk add --update curl && \
 # JRE installation courtesy https://github.com/jeanblanchard/docker-java
 # Java Version
 ENV JAVA_VERSION_MAJOR 8
-ENV JAVA_VERSION_MINOR 161
-ENV JAVA_VERSION_BUILD 12
-ENV JAVA_PACKAGE       server-jre
-ENV JAVA_SHA256_SUM    eb5776cacfd57fbf0ffb907f68c58a1cc6f823e761f4e75d78a6e3240846534e
-ENV JAVA_URL_ELEMENT 2f38c3b165be4555a1fa6e98c45e0808
+ENV JAVA_VERSION_MINOR 171
+ENV JAVA_VERSION_BUILD 11
+ENV JAVA_PACKAGE server-jre
+ENV JAVA_SHA256_SUM baf11f3492c7da4a73216666f5b7efa663392884125a88e7bd3fb85caf1edea9
+ENV JAVA_URL_ELEMENT 512cd62ec5174c3487ac17c61aaa89e8
 
 # Download and unarchive Java
 RUN apk add --update curl && \
@@ -50,10 +50,6 @@ RUN apk add --update curl && \
   echo "$JAVA_SHA256_SUM  java.tar.gz" | sha256sum -c - && \
   gunzip -c java.tar.gz | tar -xf - -C /opt && rm -f java.tar.gz && \
   ln -s /opt/jdk1.${JAVA_VERSION_MAJOR}.0_${JAVA_VERSION_MINOR} /opt/jdk && \
-  curl -jkLH "Cookie: oraclelicense=accept-securebackup-cookie" -o jce_policy-8.zip http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip && \
-  unzip jce_policy-8.zip -d /tmp && \
-  cp /tmp/UnlimitedJCEPolicyJDK8/*.jar /opt/jdk/jre/lib/security/ && \
-  rm -rf jce_policy-8.zip /tmp/UnlimitedJCEPolicyJDK8 && \
   apk del curl && \
   rm -rf /var/cache/apk/*
 
