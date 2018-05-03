@@ -1,1 +1,3 @@
 .gitreview
+*.tgz
+.idea

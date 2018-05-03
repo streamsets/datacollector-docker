@@ -20,7 +20,11 @@ addgroup -S -g "${SDC_UID}" "${SDC_USER}"
 adduser -S -u "${SDC_UID}" -G "${SDC_USER}" "${SDC_USER}"
 
 # Download and extract SDC.
-curl -o /tmp/sdc.tgz -L "${SDC_URL}"
+for f in /tmp/*.tgz; do
+    [ -e "$f" ] && mv "$f" /tmp/sdc.tgz || curl -o /tmp/sdc.tgz -L "${SDC_URL}"
+    break
+done
+
 mkdir "/opt/streamsets-datacollector-${SDC_VERSION}"
 tar xzf /tmp/sdc.tgz --strip-components 1 -C "/opt/streamsets-datacollector-${SDC_VERSION}"
 rm -rf /tmp/sdc.tgz
