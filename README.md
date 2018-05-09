@@ -1,56 +1,80 @@
-# StreamSets Data Collector
+![Data Collector Splash Image](https://raw.githubusercontent.com/streamsets/datacollector/master/datacollector_splash.png)
+
+StreamSets Data Collector is open source software for building dataflows quickly and easily, spanning on-premises, multi-cloud and edge infrastructure.
+
+It has an advanced and easy to use User Interface that allows data scientists, developers and data infrastructure teams easily create data pipelines in a fraction of the time typically required to create complex ingest scenarios.
+
+To learn more, check out [http://streamsets.com](http://streamsets.com)
 
 You must accept the [Oracle Binary Code License Agreement for Java SE](http://www.oracle.com/technetwork/java/javase/terms/license/index.html) to use this image.
 
-The Docker image for Data Collector starting from version 2.4.1.0 now uses the form type of file-based authentication by default.
-As a result, you must use a Data Collector user account to log in to the Data Collector.
-If you haven't set up custom user accounts, you can use the admin account shipped with the Data Collector.
-The default login is: admin / admin.
-Earlier versions of the Docker image required no authentication.
+### License
 
-Basic Usage
------------
+StreamSets Data Collector is built on open source technologies, our code is licensed with the
+[Apache License 2.0](LICENSE.txt).
+
+### Getting Help
+
+Connect with the [StreamSets Community](https://streamsets.com/community) to discover ways to reach the team.
+
+If you need help with production systems, you can check out the variety of support options offered on our
+[support page](http://streamsets.com/support).
+
+### Basic Usage
+
 `docker run --restart on-failure -p 18630:18630 -d --name streamsets-dc streamsets/datacollector`
 
-Detailed Usage
---------------
-*   You can specify a custom configs by mounting them as a volume to /etc/sdc or /etc/sdc/<specific config>
-*   Configuration properties in `sdc.properties` can also be overridden at runtime by specifying them env vars prefixed
-    with SDC_CONF
-*   For example http.port would be set as SDC_CONF_HTTP_PORT=12345
-*   You *should at a minimum* specify a data volume for the data directory and stage libraries. The default configured
-    location is /data for $SDC_DATA. You can override this location by passing a different value to the environment
-    variable SDC_DATA. Creating a volume for additional stage libraries is described in more detail below.
-*   You can also specify your own explicit port mappings, or arguments to the streamsets command.
-*   Files or directories placed in the "resources" directory at the project root will be copied to the image's ${SDC_RESOURCES} directory.
-*   Files or directories placed in the "sdc-extras" directory at the project root will be copied to the image's ${STREAMSETS_LIBRARIES_EXTRA_DIR}.
-    See the Dockerfile for details
+The default login is: `admin` / `admin`.
 
-For example to run with a customized sdc.properties file, a local filsystem path to store pipelines, and statically map
-the default UI port you could use the following:
+### Detailed Usage
 
-`docker run --restart on-failure -v $PWD/sdc.properties:/etc/sdc/sdc.properties:ro -v $PWD/sdc-data:/data:rw -p 18630:18630 -d streamsets/datacollector dc`
+* You can specify a custom configs by mounting them as a volume to /etc/sdc or `/etc/sdc/<configuration file>`
+* Configuration properties in `sdc.properties` and `dpm.properties` can also be overridden at runtime by specifying them env vars prefixed with `SDC_CONF` or `DPM_CONF`
+  * For example `http.port` would be set as SDC_CONF_HTTP_PORT=12345
+* You *should at a minimum* specify a data volume for the data directory unless running as a stateless service integrated with [StreamSets Control Hub](https://streamsets.com/products/sch). The default configured location for `SDC_DATA` is `/data`. You can override this location by passing a different value to the environment variable `SDC_DATA`.
+* You can also specify your own explicit port mappings, or arguments to the `streamsets` command.
+* When building the image yourself, files or directories placed in the "resources" directory at the project root will be copied to the image's  `SDC_RESOURCES` directory.
+* When building the image yourself, files or directories placed in the "sdc-extras" directory at the project root will be copied to the image's `STREAMSETS_LIBRARIES_EXTRA_DIR`. See the Dockerfile for details
 
-Creating a Data Volumes
------------------------
+For example to run with a customized sdc.properties file, a local filsystem path to store pipelines, and statically map the default UI port you could use the following:
+
+`docker run --restart on-failure -v $PWD/sdc.properties:/etc/sdc/sdc.properties:ro -v $PWD/sdc-data:/data:rw -p 18630:18630 -d streamsets/datacollector`
+
+### Creating Data Volumes
+
 To create a dedicated data volume for the pipeline store issue the following command:
 
 `docker volume create --name sdc-data`
 
 You can then use the `-v` (volume) argument to mount it when you start the data collector.
 
-`docker run -v sdc-data:/data -P -d streamsets/datacollector dc`
+`docker run -v sdc-data:/data -P -d streamsets/datacollector`
 
-**Note:** There are two different methods for managing data in Docker. The above is using *data volumes* which are empty
-when created. You can also use *data containers* which are derived from an image. These are useful when you want to
-modify and persist a path starting with existing files from a base container, such as for configuration files. We'll use
-both in the example below. See [Manage data in containers](https://docs.docker.com/engine/tutorials/dockervolumes/) for
-more detailed documentation.
+**Note:** There are two different methods for managing data in Docker. The above is using *data volumes* which are empty when created. You can also use *data containers* which are derived from an image. These are useful when you want to modify and persist a path starting with existing files from a base container, such as for configuration files. We'll use both in the example below. See [Manage data in containers](https://docs.docker.com/engine/tutorials/dockervolumes/) for more detailed documentation.
 
-Pre-configuring Data Collector
------------------------------
+### Pre-configuring Data Collector
 
-#### Option 1 - Volumes (Recommended)
+#### Option 1 - Deriving a new image (Recommended)
+
+The simplest and recommended way is to derive your own custom image.
+
+For example, create a new file named `Dockerfile` with the following contents:
+
+```dockerfile
+ARG SDC_VERSION=3.2.0.0
+FROM streamsets/datacollector:${SDC_VERSION}
+
+ARG SDC_LIBS
+RUN "${SDC_DIST}/bin/streamsets" stagelibs -install="${SDC_LIBS}"
+```
+
+To create a derived image that includes the Jython stage library for SDC version 3.2.0.0, you can run the following command:
+
+```bash
+docker build -t mycompany/datacollector:3.2.0.0 --build-arg SDC_VERSION=3.2.0.0 --build-arg SDC_LIBS=streamsets-datacollector-jython_2_7-lib .
+```
+
+#### Option 2 - Volumes
 
 First we create a data container for our configuration. We'll call ours `sdc-conf`
 
@@ -80,46 +104,15 @@ It's also recommended to use a volume for the data directory at a minimum.
 `docker volume create --name sdc-data`
 
 The volume needs to then be mounted to the correct directory when launching the container. The example below is for
-Data Collector version 2.2.1.0.
+Data Collector version 3.2.0.0.
 
-`docker run --name sdc -d -v sdc-stagelibs:/opt/streamsets-datacollector-2.2.1.0/streamsets-libs -v sdc-data:/data -P streamsets/datacollector dc -verbose`
+`docker run --name sdc -d -v sdc-stagelibs:/opt/streamsets-datacollector-3.2.0.0/streamsets-libs -v sdc-data:/data -P streamsets/datacollector dc -verbose`
 
 To get a list of available libs you could do:
 
-`docker run --rm streamsets/datacollector:2.2.1.0 stagelibs -list`
+`docker run --rm streamsets/datacollector:3.2.0.0 stagelibs -list`
 
 For example, to install the JDBC lib into the sdc-stagelibs volume you created above, you would run:
 
-`docker run --rm -v sdc-stagelibs:/opt/streamsets-datacollector-2.2.1.0/streamsets-libs streamsets/datacollector:2.2.1.0 stagelibs -install=streamsets-datacollector-jdbc-lib`
+`docker run --rm -v sdc-stagelibs:/opt/streamsets-datacollector-3.2.0.0/streamsets-libs streamsets/datacollector:3.2.0.0 stagelibs -install=streamsets-datacollector-jdbc-lib`
 
-#### Option 2 - Deriving a new image
-
-One disadvantage of the first method is that we can't commit data in a volume
-and distribute it via a docker registry. Instead we must create the volume,
-backup the data, restore the data if we need to recreate or move the container
-to another host.
-
-This second option will allow us to make modifications to the original base
-image, creating a new one which can be pushed to a docker registry and easily
-distributed.
-
-The simplest and recommended way is simply to create your own Dockerfile with
-the official streamsets/datacollector image as the base! This provides a
-repeatable process for building derived images.
-
-For example this derived Dockerfile:
-
-```
-FROM streamsets/datacollector:2.2.1.0
-# My custom configured sdc.properties
-COPY sdc.properties /etc/sdc/sdc.properties
-```
-
-`docker build -t mycompany/datacollector:2.2.1.0-abc .`
-`docker push mycompany/datacollector:2.2.1.0-abc`
-
-I've now created a new image with a customized sdc.properties file and
-am able to distribute it from a docker registry with ease!
-
-You can also launch a default container, modify it while it is running and
-use the `docker commit` command, but this isn't recommended.
