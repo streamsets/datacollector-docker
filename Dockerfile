@@ -91,7 +91,7 @@ ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/streamsets-libs-extras"
 
 # Run the SDC configuration script.
 COPY sdc-configure.sh *.tgz /tmp/
-RUN /tmp/sdc-configure.sh && rm /tmp/sdc-configure.sh
+RUN /tmp/sdc-configure.sh
 
 # Install any additional stage libraries if requested
 ARG SDC_LIBS

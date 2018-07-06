@@ -15,22 +15,28 @@
 set -e
 set -x
 
-# Create SDC user and group.
-addgroup -S -g "${SDC_UID}" "${SDC_USER}"
-adduser -S -u "${SDC_UID}" -G "${SDC_USER}" "${SDC_USER}"
+# Check if SDC dist already exists, if not create its artifact of things.
+if [ ! -d "${SDC_DIST}" ]; then
+    # Create SDC user and group.
+    addgroup -S -g "${SDC_UID}" "${SDC_USER}"
+    adduser -S -u "${SDC_UID}" -G "${SDC_USER}" "${SDC_USER}"
 
-# Download and extract SDC.
-for f in /tmp/*.tgz; do
-    [ -e "$f" ] && mv "$f" /tmp/sdc.tgz || curl -o /tmp/sdc.tgz -L "${SDC_URL}"
-    break
-done
+    # Download and extract SDC.
+    for f in /tmp/*.tgz; do
+        [ -e "$f" ] && mv "$f" /tmp/sdc.tgz || curl -o /tmp/sdc.tgz -L "${SDC_URL}"
+        break
+    done
 
-mkdir "/opt/streamsets-datacollector-${SDC_VERSION}"
-tar xzf /tmp/sdc.tgz --strip-components 1 -C "/opt/streamsets-datacollector-${SDC_VERSION}"
-rm -rf /tmp/sdc.tgz
+    mkdir "${SDC_DIST}"
+    tar xzf /tmp/sdc.tgz --strip-components 1 -C "${SDC_DIST}"
+    rm -rf /tmp/sdc.tgz
+
+    # Move configuration to /etc/sdc
+    mv "${SDC_DIST}/etc" "${SDC_CONF}"
+fi;
 
 # Add logging to stdout to make logs visible through `docker logs`.
-sed -i 's|INFO, streamsets|INFO, streamsets,stdout|' "${SDC_DIST}/etc/sdc-log4j.properties"
+sed -i 's|INFO, streamsets|INFO, streamsets,stdout|' "${SDC_CONF}/sdc-log4j.properties"
 
 # Workaround to address SDC-8005.
 if [ -d "${SDC_DIST}/user-libs" ]; then
@@ -43,9 +49,6 @@ mkdir -p /mnt \
     "${SDC_LOG}" \
     "${SDC_RESOURCES}" \
     "${USER_LIBRARIES_DIR}"
-
-# Move configuration to /etc/sdc
-mv "${SDC_DIST}/etc" "${SDC_CONF}"
 
 # Update sdc-security.policy to include the custom stage library directory.
 cat >> "${SDC_CONF}/sdc-security.policy" << EOF
