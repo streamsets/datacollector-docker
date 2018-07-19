@@ -73,6 +73,8 @@ RUN apk --no-cache add bash \
 ARG SDC_VERSION=3.2.0.0-SNAPSHOT
 ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-${SDC_VERSION}.tgz
 ARG SDC_USER=sdc
+# SDC_HOME is where executables and related files are installed. Used in setup_mapr script.
+ARG SDC_HOME="/opt/streamsets-datacollector-${SDC_VERSION}"
 
 # The paths below should generally be attached to a VOLUME for persistence.
 # SDC_CONF is where configuration files are stored. This can be shared.
@@ -83,7 +85,8 @@ ARG SDC_USER=sdc
 # USER_LIBRARIES_DIR is where custom stage libraries are installed.
 ENV SDC_CONF=/etc/sdc \
     SDC_DATA=/data \
-    SDC_DIST="/opt/streamsets-datacollector-${SDC_VERSION}" \
+    SDC_DIST=${SDC_HOME} \
+    SDC_HOME=${SDC_HOME} \
     SDC_LOG=/logs \
     SDC_RESOURCES=/resources \
     USER_LIBRARIES_DIR=/opt/streamsets-datacollector-user-libs
