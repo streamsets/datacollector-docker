@@ -14,11 +14,11 @@
 # limitations under the License.
 #
 
-FROM alpine:3.6
+FROM openjdk:8-alpine
 LABEL maintainer="Adam Kunicki <adam@streamsets.com>"
 
 # glibc installation courtesy https://github.com/jeanblanchard/docker-alpine-glibc
-ENV GLIBC_VERSION 2.25-r0
+ENV GLIBC_VERSION 2.28-r0
 
 # Download and install glibc
 # Note: libidn is required as a workaround for addressing AWS Kinesis Producer issue (https://github.com/awslabs/amazon-kinesis-producer/issues/86)
@@ -33,30 +33,6 @@ RUN apk add --update curl && \
   apk del curl && \
   rm -rf glibc.apk glibc-bin.apk /var/cache/apk/*
 
-# JRE installation courtesy https://github.com/jeanblanchard/docker-java
-# Java Version
-ENV JAVA_VERSION_MAJOR 8
-ENV JAVA_VERSION_MINOR 181
-ENV JAVA_VERSION_BUILD 13
-ENV JAVA_PACKAGE server-jre
-ENV JAVA_SHA256_SUM 678e798008c398be98ba9d39d5114a9b4151f9d3023ccdce8b56f94c5d450698
-ENV JAVA_URL_ELEMENT 96a7b8442fe848ef90c96a2fad6ed6d1
-
-# Download and unarchive Java
-RUN apk add --update curl && \
-  mkdir -p /opt && \
-  curl -jkLH "Cookie: oraclelicense=accept-securebackup-cookie" -o java.tar.gz\
-    http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-b${JAVA_VERSION_BUILD}/${JAVA_URL_ELEMENT}/${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-linux-x64.tar.gz && \
-  echo "$JAVA_SHA256_SUM  java.tar.gz" | sha256sum -c - && \
-  gunzip -c java.tar.gz | tar -xf - -C /opt && rm -f java.tar.gz && \
-  ln -s /opt/jdk1.${JAVA_VERSION_MAJOR}.0_${JAVA_VERSION_MINOR} /opt/jdk && \
-  apk del curl && \
-  rm -rf /var/cache/apk/*
-
-# Set environment
-ENV JAVA_HOME /opt/jdk
-ENV PATH ${PATH}:${JAVA_HOME}/bin
-
 # We set a UID/GID for the SDC user because certain test environments require these to be consistent throughout
 # the cluster. We use 20159 because it's above the default value of YARN's min.user.id property.
 ARG SDC_UID=20159
@@ -70,7 +46,7 @@ RUN apk --no-cache add bash \
     sed
 
 # Begin Data Collector installation
-ARG SDC_VERSION=3.2.0.0-SNAPSHOT
+ARG SDC_VERSION=3.6.0-SNAPSHOT
 ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-${SDC_VERSION}.tgz
 ARG SDC_USER=sdc
 # SDC_HOME is where executables and related files are installed. Used in setup_mapr script.
