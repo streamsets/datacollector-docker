@@ -21,6 +21,9 @@ if [ ! -d "${SDC_DIST}" ]; then
     addgroup -S -g "${SDC_UID}" "${SDC_USER}"
     adduser -S -u "${SDC_UID}" -G "${SDC_USER}" "${SDC_USER}"
 
+    # Update /etc/sudoers to include SDC user.
+    echo "${SDC_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
     # Download and extract SDC.
     for f in /tmp/*.tgz; do
         [ -e "$f" ] && mv "$f" /tmp/sdc.tgz || curl -o /tmp/sdc.tgz -L "${SDC_URL}"
