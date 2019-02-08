@@ -29,7 +29,7 @@ set_conf() {
     exit 1
   fi
 
-  sed -i 's|^#\?\('"$1"'=\).*|\1'"$2"'|' "${SDC_CONF}/sdc.properties"
+  sed -i 's|^#\?\('"$1"'=\).*|\1'"$2"'|I' "${SDC_CONF}/sdc.properties"
 }
 
 # In some environments such as Marathon $HOST and $PORT0 can be used to
