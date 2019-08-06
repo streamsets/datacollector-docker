@@ -61,17 +61,17 @@ The simplest and recommended way is to derive your own custom image.
 For example, create a new file named `Dockerfile` with the following contents:
 
 ```dockerfile
-ARG SDC_VERSION=3.2.0.0
+ARG SDC_VERSION=3.9.1
 FROM streamsets/datacollector:${SDC_VERSION}
 
 ARG SDC_LIBS
 RUN "${SDC_DIST}/bin/streamsets" stagelibs -install="${SDC_LIBS}"
 ```
 
-To create a derived image that includes the Jython stage library for SDC version 3.2.0.0, you can run the following command:
+To create a derived image that includes the Jython stage library for SDC version 3.9.1, you can run the following command:
 
 ```bash
-docker build -t mycompany/datacollector:3.2.0.0 --build-arg SDC_VERSION=3.2.0.0 --build-arg SDC_LIBS=streamsets-datacollector-jython_2_7-lib .
+docker build -t mycompany/datacollector:3.9.1 --build-arg SDC_VERSION=3.9.1 --build-arg SDC_LIBS=streamsets-datacollector-jython_2_7-lib .
 ```
 
 #### Option 2 - Volumes
@@ -104,15 +104,16 @@ It's also recommended to use a volume for the data directory at a minimum.
 `docker volume create --name sdc-data`
 
 The volume needs to then be mounted to the correct directory when launching the container. The example below is for
-Data Collector version 3.2.0.0.
+Data Collector version 
+.1.
 
-`docker run --name sdc -d -v sdc-stagelibs:/opt/streamsets-datacollector-3.2.0.0/streamsets-libs -v sdc-data:/data -P streamsets/datacollector dc -verbose`
+`docker run --name sdc -d -v sdc-stagelibs:/opt/streamsets-datacollector-3.9.1/streamsets-libs -v sdc-data:/data -P streamsets/datacollector dc -verbose`
 
 To get a list of available libs you could do:
 
-`docker run --rm streamsets/datacollector:3.2.0.0 stagelibs -list`
+`docker run --rm streamsets/datacollector:3.9.1 stagelibs -list`
 
 For example, to install the JDBC lib into the sdc-stagelibs volume you created above, you would run:
 
-`docker run --rm -v sdc-stagelibs:/opt/streamsets-datacollector-3.2.0.0/streamsets-libs streamsets/datacollector:3.2.0.0 stagelibs -install=streamsets-datacollector-jdbc-lib`
+`docker run --rm -v sdc-stagelibs:/opt/streamsets-datacollector-3.9.1/streamsets-libs streamsets/datacollector:3.9.1 stagelibs -install=streamsets-datacollector-jdbc-lib`
 
