@@ -32,6 +32,14 @@ set_conf() {
   sed -i 's|^#\?\('"$1"'=\).*|\1'"$2"'|' "${SDC_CONF}/sdc.properties"
 }
 
+# support arbitrary user IDs
+# ref: https://docs.openshift.com/container-platform/3.3/creating_images/guidelines.html#openshift-container-platform-specific-guidelines
+if ! whoami &> /dev/null; then
+  if [ -w /etc/passwd ]; then
+    echo "${SDC_USER:-sdc}:x:$(id -u):0:${SDC_USER:-sdc} user:${HOME}:/sbin/nologin" >> /etc/passwd
+  fi
+fi
+
 # In some environments such as Marathon $HOST and $PORT0 can be used to
 # determine the correct external URL to reach SDC.
 if [ ! -z "$HOST" ] && [ ! -z "$PORT0" ] && [ -z "$SDC_CONF_SDC_BASE_HTTP_URL" ]; then

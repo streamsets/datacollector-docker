@@ -33,6 +33,7 @@ RUN apk add --update --no-cache bash \
 # We set a UID/GID for the SDC user because certain test environments require these to be consistent throughout
 # the cluster. We use 20159 because it's above the default value of YARN's min.user.id property.
 ARG SDC_UID=20159
+ARG SDC_GID=20159
 
 # Begin Data Collector installation
 ARG SDC_VERSION=3.2.0.0-SNAPSHOT
@@ -66,13 +67,15 @@ ARG SDC_LIBS
 RUN if [ -n "${SDC_LIBS}" ]; then "${SDC_DIST}/bin/streamsets" stagelibs -install="${SDC_LIBS}"; fi
 
 # Copy files in $PROJECT_ROOT/resources dir to the SDC_RESOURCES dir.
-COPY --chown=sdc:sdc resources/ ${SDC_RESOURCES}/
+COPY resources/ ${SDC_RESOURCES}/
+RUN sudo chown -R sdc:sdc ${SDC_RESOURCES}/
 
 # Copy local "sdc-extras" libs to STREAMSETS_LIBRARIES_EXTRA_DIR.
 # Local files should be placed in appropriate stage lib subdirectories.  For example
 # to add a JDBC driver like my-jdbc.jar to the JDBC stage lib, the local file my-jdbc.jar
 # should be at the location $PROJECT_ROOT/sdc-extras/streamsets-datacollector-jdbc-lib/lib/my-jdbc.jar
-COPY --chown=sdc:sdc sdc-extras/ ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
+COPY sdc-extras/ ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
+RUN sudo chown -R sdc:sdc ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
 
 USER ${SDC_USER}
 EXPOSE 18630
