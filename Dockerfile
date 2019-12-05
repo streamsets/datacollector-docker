@@ -57,6 +57,8 @@ ENV SDC_CONF=/etc/sdc \
     SDC_RESOURCES=/resources \
     USER_LIBRARIES_DIR=/opt/streamsets-datacollector-user-libs
 ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/streamsets-libs-extras"
+ENV SDC_JAVA_OPTS="-Dfile.encoding=UTF-8 -Dsun.jnu.encoding=utf-8"
+ENV SDC_JAVA8_OPTS="-Dfile.encoding=UTF-8 -Dsun.jnu.encoding=utf-8"
 
 # Run the SDC configuration script.
 COPY sdc-configure.sh *.tgz /tmp/
