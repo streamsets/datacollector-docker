@@ -27,6 +27,7 @@ RUN apk add --update --no-cache bash \
     libstdc++ \
     libuuid \
     sed \
+    grep \
     sudo && \
     echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
 

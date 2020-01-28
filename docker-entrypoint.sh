@@ -29,7 +29,7 @@ set_conf() {
     exit 1
   fi
 
-  sed -i 's|^#\?\('"$1"'=\).*|\1'"$2"'|' "${SDC_CONF}/sdc.properties"
+  grep -q "^$1" ${SDC_CONF}/sdc.properties && sed 's|^#\?\('"$1"'=\).*|\1'"$2"'|' -i ${SDC_CONF}/sdc.properties || echo -e "\n$1=$2" >> ${SDC_CONF}/sdc.properties
 }
 
 # support arbitrary user IDs
