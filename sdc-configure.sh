@@ -79,5 +79,13 @@ EOF
 
 # Use short option -s as long option --status is not supported on alpine linux.
 sed -i 's|--status|-s|' "${SDC_DIST}/libexec/_stagelibs"
+
+# Set distribution channel variable
+sed -i '/^export SDC_DISTRIBUTION_CHANNEL=*/d' "${SDC_DIST}/libexec/sdcd-env.sh"
+sed -i '/^export SDC_DISTRIBUTION_CHANNEL=*/d' "${SDC_DIST}/libexec/sdc-env.sh"
+echo -e "\nexport SDC_DISTRIBUTION_CHANNEL=docker" >> ${SDC_DIST}/libexec/sdc-env.sh
+echo -e "\nexport SDC_DISTRIBUTION_CHANNEL=docker" >> ${SDC_DIST}/libexec/sdcd-env.sh
+
+
 # Needed for OpenShift deployment
 sed -i 's/http.realm.file.permission.check=true/http.realm.file.permission.check=false/' ${SDC_CONF}/sdc.properties
