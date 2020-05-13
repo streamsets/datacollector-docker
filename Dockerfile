@@ -17,17 +17,20 @@
 FROM adoptopenjdk/openjdk8:jdk8u252-b09-alpine
 LABEL maintainer="Adam Kunicki <adam@streamsets.com>"
 
-# Note: libidn is required as a workaround for addressing AWS Kinesis Producer issue (https://github.com/awslabs/amazon-kinesis-producer/issues/86)
+# Note: libidn is required as a workaround for addressing AWS Kinesis Producer issue
+# (https://github.com/awslabs/amazon-kinesis-producer/issues/86).
 # nsswitch.conf is based on jeanblanchard's alpine base image and used for configuring DNS resolution priority
+# protobuf is included to enable testing of the protobuf record format.
 RUN apk add --update --no-cache bash \
     curl \
+    grep \
     krb5-libs \
     krb5 \
     libidn \
     libstdc++ \
     libuuid \
+    protobuf \
     sed \
-    grep \
     sudo && \
     echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
 
