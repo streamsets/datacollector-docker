@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM adoptopenjdk/openjdk8:jdk8u252-b09-alpine
+FROM adoptopenjdk/openjdk8:jdk8u202-b08-alpine
 LABEL maintainer="Adam Kunicki <adam@streamsets.com>"
 
 # Note: libidn is required as a workaround for addressing AWS Kinesis Producer issue
