@@ -59,6 +59,7 @@ ENV SDC_CONF=/etc/sdc \
     SDC_HOME=${SDC_HOME} \
     SDC_LOG=/logs \
     SDC_RESOURCES=/resources \
+    SDC_VERSION=${SDC_VERSION} \
     USER_LIBRARIES_DIR=/opt/streamsets-datacollector-user-libs
 ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/streamsets-libs-extras"
 
