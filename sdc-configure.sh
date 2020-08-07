@@ -89,3 +89,6 @@ echo -e "\nexport SDC_DISTRIBUTION_CHANNEL=docker" >> ${SDC_DIST}/libexec/sdcd-e
 
 # Needed for OpenShift deployment
 sed -i 's/http.realm.file.permission.check=true/http.realm.file.permission.check=false/' ${SDC_CONF}/sdc.properties
+
+# Create VERSION file
+echo "${SDC_VERSION}" > "${SDC_DIST}/VERSION"
