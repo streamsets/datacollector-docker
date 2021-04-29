@@ -17,6 +17,17 @@
 
 set -e
 
+# A way to kill child process when parent process gets killed
+execute_with_signal_listener() {
+    "$@" &
+    pid="$!"
+    trap "echo 'Stopping PID $pid'; kill -SIGTERM $pid" SIGINT SIGTERM
+
+    while kill -0 $pid > /dev/null 2>&1; do
+        wait
+    done
+}
+
 # We translate environment variables to sdc.properties and rewrite them.
 set_conf() {
   if [ $# -ne 2 ]; then
@@ -56,4 +67,4 @@ for e in $(env); do
   fi
 done
 
-exec "${SDC_DIST}/bin/streamsets" "$@"
+execute_with_signal_listener "${SDC_DIST}/bin/streamsets" "$@"
