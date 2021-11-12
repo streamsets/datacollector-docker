@@ -19,7 +19,8 @@ FROM adoptopenjdk/openjdk8:jdk8u275-b01-alpine
 # (https://github.com/awslabs/amazon-kinesis-producer/issues/86).
 # nsswitch.conf is based on jeanblanchard's alpine base image and used for configuring DNS resolution priority
 # protobuf is included to enable testing of the protobuf record format.
-RUN apk add --update --no-cache bash \
+RUN apk add --update --no-cache apache2-utils \
+    bash \
     curl \
     grep \
     krb5-libs \
