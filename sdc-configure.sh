@@ -51,7 +51,7 @@ addgroup ${SDC_USER} root && \
 echo "${SDC_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Add logging to stdout to make logs visible through `docker logs`.
-sed -i 's|INFO, streamsets|INFO, streamsets,stdout|' "${SDC_CONF}/sdc-log4j.properties"
+sed -i 's|rootLogger.appenderRef.streamsets.ref = streamsets|rootLogger.appenderRef.streamsets.ref = streamsets\nrootLogger.appenderRef.stdout.ref = stdout|' "${SDC_CONF}/sdc-log4j2.properties"
 
 # Workaround to address SDC-8005.
 if [ -d "${SDC_DIST}/user-libs" ]; then
