@@ -12,8 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-FROM adoptopenjdk/openjdk8:jdk8u275-b01-alpine
+
+# https://hub.docker.com/_/eclipse-temurin?tab=tags
+FROM eclipse-temurin:8u322-b06-jdk-alpine
 
 # Note: libidn is required as a workaround for addressing AWS Kinesis Producer issue
 # (https://github.com/awslabs/amazon-kinesis-producer/issues/86).
