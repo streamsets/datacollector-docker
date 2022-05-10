@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # https://hub.docker.com/_/eclipse-temurin?tab=tags
-FROM eclipse-temurin:8u322-b06-jdk-alpine
+FROM eclipse-temurin:8u332-b09-jdk-alpine
 
 # Note: libidn is required as a workaround for addressing AWS Kinesis Producer issue
 # (https://github.com/awslabs/amazon-kinesis-producer/issues/86).
