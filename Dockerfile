@@ -31,6 +31,7 @@ RUN apk add --update --no-cache apache2-utils \
     libuuid \
     protobuf \
     sed \
+    gcompat \
     sudo && \
     echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
 
@@ -63,6 +64,7 @@ ENV SDC_CONF=/etc/sdc \
 ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/streamsets-libs-extras"
 
 ENV SDC_JAVA_OPTS="-Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8"
+ENV LD_PRELOAD=/lib/libgcompat.so.0
 
 # Run the SDC configuration script.
 COPY sdc-configure.sh *.tgz /tmp/
