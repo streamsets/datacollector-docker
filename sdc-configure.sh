@@ -38,7 +38,7 @@ fi;
 # It fails because containers in OpenShift run as an ephemeral uid for
 # security purposes, and that uid does not show up in /etc/passwd.
 addgroup --system --gid ${SDC_GID} ${SDC_USER} && \
-    adduser --system --disabled-password -u ${SDC_UID} -G ${SDC_USER} ${SDC_USER}
+    adduser --system --disabled-password -u ${SDC_UID} --group ${SDC_USER}
 
 addgroup ${SDC_USER} root && \
     chgrp -R 0 "${SDC_DIST}" "${SDC_CONF}"  && \
