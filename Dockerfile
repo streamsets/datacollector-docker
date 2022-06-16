@@ -14,26 +14,17 @@
 # limitations under the License.
 
 # https://hub.docker.com/_/eclipse-temurin?tab=tags
-FROM eclipse-temurin:8u332-b09-jdk-alpine
+FROM eclipse-temurin:8u332-b09-jdk
 
-# Note: libidn is required as a workaround for addressing AWS Kinesis Producer issue
-# (https://github.com/awslabs/amazon-kinesis-producer/issues/86).
-# nsswitch.conf is based on jeanblanchard's alpine base image and used for configuring DNS resolution priority
-# protobuf is included to enable testing of the protobuf record format.
-RUN apk add --update --no-cache apache2-utils \
-    bash \
+RUN apt-get update && \
+    apt-get -y install \
+    sudo \
+    apache2-utils \
     curl \
-    grep \
-    krb5-libs \
-    krb5 \
-    libidn \
-    libstdc++ \
-    libuuid \
-    protobuf \
-    sed \
-    gcompat \
-    sudo && \
-    echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
+    krb5-user \
+    protobuf-compiler
+
+RUN echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
 
 # We set a UID/GID for the SDC user because certain test environments require these to be consistent throughout
 # the cluster. We use 20159 because it's above the default value of YARN's min.user.id property.
@@ -64,16 +55,6 @@ ENV SDC_CONF=/etc/sdc \
 ENV STREAMSETS_LIBRARIES_EXTRA_DIR="${SDC_DIST}/streamsets-libs-extras"
 
 ENV SDC_JAVA_OPTS="-Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8"
-
-# ALPINE MISSING LIBS
-# This (along with adding gcompat) worarounds a grpc issue present in some google libs.
-# It might be useless in future alpine/netty releases. Check https://github.com/grpc/grpc-java/issues/8751.
-ENV LD_PRELOAD="/lib/ld-musl-x86_64.so.1 /lib/libgcompat.so.0"
-
-# We also need to link libresolv.so.2 to gcompat libs, as some libs used by MapR need it. Again,
-# this is an issue with alpine not having some needed libs, and this is just a workaround.
-RUN ln -s /lib64/ld-linux-x86-64.so.2 /usr/lib/libresolv.so.2
-# #
 
 # Run the SDC configuration script.
 COPY sdc-configure.sh *.tgz /tmp/
