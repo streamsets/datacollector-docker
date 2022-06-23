@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # https://hub.docker.com/_/eclipse-temurin?tab=tags
-FROM eclipse-temurin:8u332-b09-jdk
+FROM eclipse-temurin:8u332-b09-jdk-focal
 
 RUN apt-get update && \
     apt-get -y install \
