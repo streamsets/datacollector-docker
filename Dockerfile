@@ -24,7 +24,12 @@ RUN apt-get update && \
     krb5-user \
     protobuf-compiler
 
+# Used for configuring DNS resolution priority
 RUN echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
+
+# We need to set up GMT as the default timezone to maintain compatibility
+RUN ln -fs /usr/share/zoneinfo/GMT /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
 
 # We set a UID/GID for the SDC user because certain test environments require these to be consistent throughout
 # the cluster. We use 20159 because it's above the default value of YARN's min.user.id property.
