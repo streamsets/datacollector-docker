@@ -22,7 +22,8 @@ RUN apt-get update && \
     apache2-utils \
     curl \
     krb5-user \
-    protobuf-compiler
+    protobuf-compiler \
+    psmisc
 
 # Used for configuring DNS resolution priority
 RUN echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
