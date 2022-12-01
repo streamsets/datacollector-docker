@@ -17,8 +17,10 @@
 
 # The two valid values for the BASE_IMAGE_TAG argument are 17-jdk-focal if you want to run
 # datacollector on Java17 or 8u332-b09-jdk-focal if you want to do so in Java8.
-ARG BASE_IMAGE_TAG=8u332-b09-jdk-focal
-FROM eclipse-temurin:$BASE_IMAGE_TAG
+# TEMP: Done for JDK11 test
+#ARG BASE_IMAGE_TAG=8u332-b09-jdk-focal
+#FROM eclipse-temurin:$BASE_IMAGE_TAG
+FROM eclipse-temurin:11-jdk-focal
 
 RUN apt-get update && \
     apt-get -y install \
