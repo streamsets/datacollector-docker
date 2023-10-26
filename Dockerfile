@@ -16,8 +16,8 @@
 # https://hub.docker.com/_/eclipse-temurin?tab=tags
 
 # The two valid values for the BASE_IMAGE_TAG argument are 17.x.x_x-jdk-focal if you want to run
-# datacollector on Java17 or 8u332-b09-jdk-focal if you want to do so in Java8.
-ARG BASE_IMAGE_TAG=8u362-b09-jre-focal
+# datacollector on Java17 or 8u382-b05-jdk-focal if you want to do so in Java8.
+ARG BASE_IMAGE_TAG=8u382-b05-jdk-focal
 FROM eclipse-temurin:$BASE_IMAGE_TAG
 
 RUN apt-get update && \
@@ -28,7 +28,9 @@ RUN apt-get update && \
     krb5-user \
     protobuf-compiler \
     psmisc \
-    lsb-release
+    lsb-release \
+    iputils-ping \
+    traceroute
 
 # Used for configuring DNS resolution priority
 RUN echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
@@ -85,6 +87,10 @@ RUN sudo chown -R sdc:sdc ${SDC_RESOURCES}/
 # should be at the location $PROJECT_ROOT/sdc-extras/streamsets-datacollector-jdbc-lib/lib/my-jdbc.jar
 COPY sdc-extras/ ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
 RUN sudo chown -R sdc:sdc ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
+
+# Create symlink of custom certs for compatibility between jre and jdk file paths
+RUN mkdir -p ${JAVA_HOME}/lib/ && \
+    ln -s ${JAVA_HOME}/jre/lib/security/ ${JAVA_HOME}/lib/
 
 USER ${SDC_USER}
 EXPOSE 18630
