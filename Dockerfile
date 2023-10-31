@@ -19,6 +19,7 @@
 # datacollector on Java17 or 8u382-b05-jdk-focal if you want to do so in Java8.
 ARG BASE_IMAGE_TAG=8u382-b05-jdk-focal
 FROM eclipse-temurin:$BASE_IMAGE_TAG
+ARG BASE_IMAGE_TAG=8u382-b05-jdk-focal
 
 RUN apt-get update && \
     apt-get -y install \
@@ -89,8 +90,7 @@ COPY sdc-extras/ ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
 RUN sudo chown -R sdc:sdc ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
 
 # Create symlink of custom certs for compatibility between jre and jdk file paths
-RUN mkdir -p ${JAVA_HOME}/lib/ && \
-    ln -s ${JAVA_HOME}/jre/lib/security/ ${JAVA_HOME}/lib/
+RUN /bin/bash -c 'if [[ ${BASE_IMAGE_TAG} =~ ^8 ]]; then ln -snf ${JAVA_HOME}/jre/lib/security ${JAVA_HOME}/lib/security; fi'
 
 USER ${SDC_USER}
 EXPOSE 18630
