@@ -1,0 +1,3 @@
+java_version:
+  java_8: "8u332-b09-jdk-focal"
+  java_17: "17.0.5_8-jdk-focal"
