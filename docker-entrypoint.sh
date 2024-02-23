@@ -17,6 +17,17 @@
 
 set -e
 
+# Support for custom CA certificates, when present in the base image.
+if [[ -x /__cacert_entrypoint.sh ]]; then
+  if [[ -n "${CUSTOM_TRUSTSTORE_CA_CERT:-}" ]]; then
+    mkdir -p /certificates
+    printf '%s' "${CUSTOM_TRUSTSTORE_CA_CERT}" >/certificates/ca-cert.crt
+    USE_SYSTEM_CA_CERTS=1 /__cacert_entrypoint.sh
+  else
+    /__cacert_entrypoint.sh
+  fi
+fi
+
 # We translate environment variables to sdc.properties and rewrite them.
 set_conf() {
   if [ $# -ne 2 ]; then
