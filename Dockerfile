@@ -15,11 +15,9 @@
 
 # https://hub.docker.com/_/eclipse-temurin?tab=tags
 
-# The two valid values for the BASE_IMAGE_TAG argument are 17.x.x_x-jdk-focal if you want to run
-# datacollector on Java17 or 8u382-b05-jdk-focal if you want to do so in Java8.
-ARG BASE_IMAGE_TAG=8u382-b05-jdk-focal
+# BASE_IMAGE_TAG must be a valid tag for eclipse-temurin: https://hub.docker.com/_/eclipse-temurin/tags
+ARG BASE_IMAGE_TAG=8u402-b06-jdk-focal
 FROM eclipse-temurin:$BASE_IMAGE_TAG
-ARG BASE_IMAGE_TAG=8u382-b05-jdk-focal
 
 RUN apt-get update && \
     apt-get -y install \
