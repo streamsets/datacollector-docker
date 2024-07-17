@@ -13,5 +13,5 @@
 # limitations under the License.
 
 java_version:
-  java_8: "8u402-b06-jdk-focal"
-  java_17: "17.0.5_8-jdk-focal"
+  java_8: "8u412-b08-jdk-focal"
+  java_17: "17.0.11_9-jdk-focal"
