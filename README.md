@@ -1,3 +1,20 @@
+[comment]: <> (  )
+[comment]: <> ( Copyright contributors to the StreamSets project )
+[comment]: <> ( StreamSets Inc., an IBM Company 2024 )
+[comment]: <> (  )
+[comment]: <> ( Licensed under the Apache License, Version 2.0 (the "License"); )
+[comment]: <> ( you may not use this file except in compliance with the License. )
+[comment]: <> ( You may obtain a copy of the License at )
+[comment]: <> (  )
+[comment]: <> (     http://www.apache.org/licenses/LICENSE-2.0 )
+[comment]: <> (  )
+[comment]: <> ( Unless required by applicable law or agreed to in writing, software )
+[comment]: <> ( distributed under the License is distributed on an "AS IS" BASIS, )
+[comment]: <> ( WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. )
+[comment]: <> ( See the License for the specific language governing permissions and )
+[comment]: <> ( limitations under the License. )
+[comment]: <> (  )
+
 ![Data Collector Splash Image](https://raw.githubusercontent.com/streamsets/datacollector/master/datacollector_splash.png)
 
 StreamSets Data Collector allows building dataflows quickly and easily, spanning on-premises, multi-cloud and edge infrastructure.

@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# Copyright 2017 StreamSets Inc.
+# Copyright contributors to the StreamSets project
+# StreamSets Inc., an IBM Company 2024
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

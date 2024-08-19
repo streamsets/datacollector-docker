@@ -1,0 +1,9 @@
+# IBM Confidential
+# PID 5900-BAF
+# Copyright StreamSets Inc., an IBM Company 2024
+
+repos:
+  - repo: git@github.com:streamsets/copyrighter.git
+    rev: v1.0.12
+    hooks:
+      - id: copyright
