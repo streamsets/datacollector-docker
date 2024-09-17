@@ -17,9 +17,9 @@
 
 # https://hub.docker.com/_/eclipse-temurin?tab=tags
 
-# BASE_IMAGE_TAG must be a valid tag for eclipse-temurin: https://hub.docker.com/_/eclipse-temurin/tags
-ARG BASE_IMAGE_TAG=8u402-b06-jdk-focal
-FROM eclipse-temurin:$BASE_IMAGE_TAG
+# BASE_IMAGE_TAG must be a valid tag from the list of ibm-semeru-runtimes images
+ARG BASE_IMAGE_TAG=open-8-jdk-ubi-minimal
+FROM icr.io/appcafe/ibm-semeru-runtimes:$BASE_IMAGE_TAG
 
 RUN apt-get update && \
     apt-get -y install \
