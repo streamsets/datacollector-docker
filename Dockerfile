@@ -21,8 +21,8 @@
 ARG BASE_IMAGE_TAG=open-8-jdk-ubi-minimal
 FROM icr.io/appcafe/ibm-semeru-runtimes:$BASE_IMAGE_TAG
 
-RUN apt-get update && \
-    apt-get -y install \
+RUN yum update && \
+    yum -y install \
     sudo \
     apache2-utils \
     curl \
