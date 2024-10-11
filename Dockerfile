@@ -17,28 +17,46 @@
 
 # https://hub.docker.com/_/eclipse-temurin?tab=tags
 
-# BASE_IMAGE_TAG must be a valid tag for eclipse-temurin: https://hub.docker.com/_/eclipse-temurin/tags
-ARG BASE_IMAGE_TAG=8u402-b06-jdk-focal
-FROM eclipse-temurin:$BASE_IMAGE_TAG
+# BASE_IMAGE_TAG must be a valid tag from the list of ibm-semeru-runtimes images
+ARG BASE_IMAGE_TAG=open-8-jdk-ubi-minimal
+FROM icr.io/appcafe/ibm-semeru-runtimes:$BASE_IMAGE_TAG
 
-RUN apt-get update && \
-    apt-get -y install \
+USER root
+
+RUN microdnf install yum
+
+RUN yum -y update && \
+    yum -y install \
     sudo \
-    apache2-utils \
     curl \
-    krb5-user \
     protobuf-compiler \
     psmisc \
-    lsb-release \
-    iputils-ping \
-    traceroute
+    httpd-tools \
+    krb5-workstation \
+    redhat-lsb-core \
+    iputils \
+    wget
+
+# Install traceroute version depending on the architecture of the host
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then \
+        wget https://vault.centos.org/8-stream/BaseOS/x86_64/os/Packages/traceroute-2.1.0-6.el8.x86_64.rpm; \
+    elif [ "$ARCH" = "aarch64" ]; then \
+        wget https://vault.centos.org/8-stream/BaseOS/aarch64/os/Packages/traceroute-2.1.0-6.el8.aarch64.rpm; \
+    else \
+        echo "Architecture $ARCH is not supported" && exit 1; \
+    fi && \
+    yum install -y traceroute-2.1.0-6.el8.*.rpm && \
+    rm traceroute-2.1.0-6.el8.*.rpm
+
 
 # Used for configuring DNS resolution priority
 RUN echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
 
 # We need to set up GMT as the default timezone to maintain compatibility
-RUN ln -fs /usr/share/zoneinfo/GMT /etc/localtime && \
-    dpkg-reconfigure -f noninteractive tzdata
+RUN ln -sf /usr/share/zoneinfo/GMT /etc/localtime && \
+    echo "GMT" > /etc/timezone
+
 
 # We set a UID/GID for the SDC user because certain test environments require these to be consistent throughout
 # the cluster. We use 20159 because it's above the default value of YARN's min.user.id property.
@@ -46,7 +64,7 @@ ARG SDC_UID=20159
 ARG SDC_GID=20159
 
 # Begin Data Collector installation
-ARG SDC_VERSION=3.16.0-SNAPSHOT
+ARG SDC_VERSION=6.0.0-SNAPSHOT
 ARG SDC_URL=http://nightly.streamsets.com.s3-us-west-2.amazonaws.com/datacollector/latest/tarball/streamsets-datacollector-core-${SDC_VERSION}.tgz
 ARG SDC_USER=sdc
 # SDC_HOME is where executables and related files are installed. Used in setup_mapr script.

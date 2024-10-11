@@ -16,5 +16,5 @@
 #
 
 java_version:
-  java_8: "8u422-b05-jdk-focal"
-  java_17: "17.0.12_7-jdk-focal"
+  java_8: "open-8-jdk-ubi-minimal"
+  java_17: "open-17-jdk-ubi-minimal"

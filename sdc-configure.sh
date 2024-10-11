@@ -40,10 +40,10 @@ fi;
 # current user name, which fails when run in OpenShift.
 # It fails because containers in OpenShift run as an ephemeral uid for
 # security purposes, and that uid does not show up in /etc/passwd.
-addgroup --system --gid ${SDC_GID} ${SDC_USER} && \
-    adduser --system --disabled-password --uid ${SDC_UID} --gid ${SDC_GID} ${SDC_USER}
+groupadd --system --gid ${SDC_GID} ${SDC_USER} && \
+    adduser --system --uid ${SDC_UID} --gid ${SDC_GID} ${SDC_USER}
 
-addgroup ${SDC_USER} root && \
+usermod -aG root ${SDC_USER} && \
     chgrp -R 0 "${SDC_DIST}" "${SDC_CONF}"  && \
     chmod -R g=u "${SDC_DIST}" "${SDC_CONF}" && \
     # setgid bit on conf dir to preserve group on sed -i
