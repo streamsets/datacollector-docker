@@ -15,27 +15,26 @@
 # limitations under the License.
 #
 
-# https://hub.docker.com/_/eclipse-temurin?tab=tags
+FROM registry.access.redhat.com/ubi9/openjdk-17-runtime:1.20-2.1726695178
 
-# BASE_IMAGE_TAG must be a valid tag from the list of ibm-semeru-runtimes images
-ARG BASE_IMAGE_TAG=open-8-jdk-ubi-minimal
-FROM icr.io/appcafe/ibm-semeru-runtimes:$BASE_IMAGE_TAG
-
+ARG JDK_VERSION=17
 USER root
 
-RUN microdnf install yum
-
-RUN yum -y update && \
+RUN microdnf install -y yum && \
+    update-crypto-policies --set DEFAULT:SHA1 && \
+    yum -y update && \
     yum -y install \
-    sudo \
-    curl \
-    protobuf-compiler \
-    psmisc \
-    httpd-tools \
-    krb5-workstation \
-    redhat-lsb-core \
-    iputils \
-    wget
+           sudo \
+           unzip \
+           psmisc \
+           httpd-tools \
+           krb5-workstation \
+           iputils \
+           wget
+
+RUN (\[ $JDK_VERSION == 8 \] && \
+        yum -y install java-1.8.0-openjdk-devel && \
+        alternatives --set java java-1.8.0-openjdk.aarch64 ) || exit 0
 
 # Install traceroute version depending on the architecture of the host
 RUN ARCH=$(uname -m) && \
@@ -48,6 +47,12 @@ RUN ARCH=$(uname -m) && \
     fi && \
     yum install -y traceroute-2.1.0-6.el8.*.rpm && \
     rm traceroute-2.1.0-6.el8.*.rpm
+
+# Install protobuf-compiler
+RUN curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v25.1/protoc-25.1-linux-x86_64.zip && \
+    unzip protoc-25.1-linux-x86_64.zip -d $HOME/.local && \
+    rm protoc-25.1-linux-x86_64.zip && \
+    export PATH="$PATH:$HOME/.local/bin"
 
 
 # Used for configuring DNS resolution priority
@@ -98,17 +103,17 @@ RUN if [ -n "${SDC_LIBS}" ]; then "${SDC_DIST}/bin/streamsets" stagelibs -instal
 
 # Copy files in $PROJECT_ROOT/resources dir to the SDC_RESOURCES dir.
 COPY resources/ ${SDC_RESOURCES}/
-RUN sudo chown -R sdc:sdc ${SDC_RESOURCES}/
+RUN chown -R sdc:sdc ${SDC_RESOURCES}/
 
 # Copy local "sdc-extras" libs to STREAMSETS_LIBRARIES_EXTRA_DIR.
 # Local files should be placed in appropriate stage lib subdirectories.  For example
 # to add a JDBC driver like my-jdbc.jar to the JDBC stage lib, the local file my-jdbc.jar
 # should be at the location $PROJECT_ROOT/sdc-extras/streamsets-datacollector-jdbc-lib/lib/my-jdbc.jar
 COPY sdc-extras/ ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
-RUN sudo chown -R sdc:sdc ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
+RUN chown -R sdc:sdc ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
 
 # Create symlink of custom certs for compatibility between jre and jdk file paths
-RUN /bin/bash -c 'if [[ ${BASE_IMAGE_TAG} =~ ^8 ]]; then ln -snf ${JAVA_HOME}/jre/lib/security ${JAVA_HOME}/lib/security; fi'
+RUN /bin/bash -c 'if [[ ${JDK_VERSION} =~ ^8 ]]; then ln -snf ${JAVA_HOME}/jre/lib/security ${JAVA_HOME}/lib/security; fi'
 
 USER ${SDC_USER}
 EXPOSE 18630

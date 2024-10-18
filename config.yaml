@@ -16,5 +16,7 @@
 #
 
 java_version:
-  java_8: "open-8-jdk-ubi-minimal"
-  java_17: "open-17-jdk-ubi-minimal"
+  java_8:
+    JDK_VERSION: 8
+  java_17:
+    JDK_VERSION: 17
