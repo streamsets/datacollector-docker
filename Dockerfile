@@ -28,6 +28,7 @@ RUN microdnf install -y yum && \
            unzip \
            psmisc \
            httpd-tools \
+           hostname \
            krb5-workstation \
            iputils \
            wget
