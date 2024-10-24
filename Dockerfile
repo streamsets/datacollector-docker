@@ -105,7 +105,7 @@ RUN if [ -n "${SDC_LIBS}" ]; then "${SDC_DIST}/bin/streamsets" stagelibs -instal
 
 # Copy files in $PROJECT_ROOT/resources dir to the SDC_RESOURCES dir.
 COPY resources/ ${SDC_RESOURCES}/
-RUN chown -R sdc:0 ${SDC_RESOURCES}/
+RUN chown -R sdc:sdc ${SDC_RESOURCES}/
 
 # Copy local "sdc-extras" libs to STREAMSETS_LIBRARIES_EXTRA_DIR.
 # Local files should be placed in appropriate stage lib subdirectories.  For example
