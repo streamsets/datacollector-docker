@@ -33,9 +33,10 @@ RUN microdnf install -y yum && \
            iputils \
            wget
 
-RUN (\[ $JDK_VERSION == 8 \] && \
+RUN if [ "$JDK_VERSION" = 8 ]; then \
         yum -y install java-1.8.0-openjdk-devel && \
-        alternatives --set java java-1.8.0-openjdk.aarch64 ) || exit 0
+        alternatives --set java java-1.8.0-openjdk.$(uname -m); \
+    fi
 
 # Install traceroute version depending on the architecture of the host
 RUN ARCH=$(uname -m) && \
@@ -104,7 +105,7 @@ RUN if [ -n "${SDC_LIBS}" ]; then "${SDC_DIST}/bin/streamsets" stagelibs -instal
 
 # Copy files in $PROJECT_ROOT/resources dir to the SDC_RESOURCES dir.
 COPY resources/ ${SDC_RESOURCES}/
-RUN chown -R sdc:sdc ${SDC_RESOURCES}/
+RUN chown -R sdc:0 ${SDC_RESOURCES}/
 
 # Copy local "sdc-extras" libs to STREAMSETS_LIBRARIES_EXTRA_DIR.
 # Local files should be placed in appropriate stage lib subdirectories.  For example
