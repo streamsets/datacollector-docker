@@ -38,6 +38,11 @@ RUN if [ "$JDK_VERSION" = 8 ]; then \
         alternatives --set java java-1.8.0-openjdk.$(uname -m); \
     fi
 
+# OpenShift: Ensure container will have permissions to add custom CA certs at startup, if desired.
+RUN if [ -d /etc/pki/ca-trust ]; then \
+        chmod -R g+w /etc/pki/ca-trust; \
+    fi
+
 # Install traceroute version depending on the architecture of the host
 RUN ARCH=$(uname -m) && \
     if [ "$ARCH" = "x86_64" ]; then \
