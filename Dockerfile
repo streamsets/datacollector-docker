@@ -15,28 +15,37 @@
 # limitations under the License.
 #
 
-FROM registry.access.redhat.com/ubi9/openjdk-17-runtime:1.20-2.1726695178
+ARG BASE_IMAGE=registry.access.redhat.com/ubi9/openjdk-17-runtime
+FROM $BASE_IMAGE
+
+USER 0
+RUN microdnf -y upgrade && \
+    microdnf install -y \
+        httpd-tools \
+        hostname \
+        krb5-workstation \
+        iputils \
+        psmisc \
+        sudo \
+        wget \
+        unzip \
+        yum \
+        && \
+    microdnf clean all
 
 ARG JDK_VERSION=17
-USER root
-
-RUN microdnf install -y yum && \
-    update-crypto-policies --set DEFAULT:SHA1 && \
-    yum -y update && \
-    yum -y install \
-           sudo \
-           unzip \
-           psmisc \
-           httpd-tools \
-           hostname \
-           krb5-workstation \
-           iputils \
-           wget
-
-RUN if [ "$JDK_VERSION" = 8 ]; then \
-        yum -y install java-1.8.0-openjdk-devel && \
+RUN set -e; \
+    if [ $JDK_VERSION = 8 ]; then \
+        microdnf install -y java-1.8.0-openjdk-devel; \
+        microdnf clean all; \
         alternatives --set java java-1.8.0-openjdk.$(uname -m); \
     fi
+
+# Marker for transition between base image and application image for CVE scanning
+ARG LAYER_NAME=application-image
+
+# Accept SHA-1 in TLS trust chains for compatibility
+RUN update-crypto-policies --set DEFAULT:SHA1
 
 # OpenShift: Ensure container will have permissions to add custom CA certs at startup, if desired.
 RUN if [ -d /etc/pki/ca-trust ]; then \
