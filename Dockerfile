@@ -122,6 +122,9 @@ RUN chown -R sdc:sdc ${STREAMSETS_LIBRARIES_EXTRA_DIR}/
 # Create symlink of custom certs for compatibility between jre and jdk file paths
 RUN /bin/bash -c 'if [[ ${JDK_VERSION} =~ ^8 ]]; then ln -snf ${JAVA_HOME}/jre/lib/security ${JAVA_HOME}/lib/security; fi'
 
+# Create Flight libs symlink
+RUN sudo ln -s ${SDC_DIST}/flightservice/opt/ibm /opt/ibm
+
 USER ${SDC_USER}
 EXPOSE 18630
 COPY docker-entrypoint.sh /
